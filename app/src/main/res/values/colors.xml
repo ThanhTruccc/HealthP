@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="gray">#6B6868</color>
+
+    <!-- Custom colors for Health App -->
+    <color name="primary_red">#E74C3C</color>
+    <color name="primary_red_dark">#C0392B</color>
+    <color name="primary_red_light">#F08080</color>
+    <color name="background_peach">#FFF5F0</color>
+    <color name="background_light_peach">#FFEEE8</color>
+    <color name="divider">#E0E0E0</color>
+    <color name="text_hint">#999999</color>
+    <color name="orange_accent">#FF6B35</color>
+    <color name="orange_light">#FF8C42</color>
+    <color name="heart_pink">#FF6B6B</color>
+    <color name="teal_accent">#4ECDC4</color>
+    <color name="divider_gray">#DDDDDD</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="rating_star">#FFD700</color>
+
+    <color name="primary">#667eea</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+</resources>

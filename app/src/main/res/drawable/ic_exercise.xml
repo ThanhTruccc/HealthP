@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Đầu -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M13.5,5.5a1.5,1.5 0,1 0,0 -3,1.5,1.5 0,0 0,0 3z" />
+    <!-- Cơ thể và chân -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M9.06,8.13L8,10l3.5,2v3.5L7,21h2.5l3.5,-4v-3l2.5,1v5h2v-6.5l-3,-1.5v-2c0,-0.55 -0.45,-1 -1,-1h-1.8l0.8,-1.6c0.3,-0.6 0.1,-1.4 -0.5,-1.7 -0.6,-0.3 -1.4,-0.1 -1.7,0.5z"/>
+</vector>

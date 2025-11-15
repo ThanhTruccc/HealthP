@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <!-- Logo với hiệu ứng chuyên nghiệp -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="110dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@android:color/white">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo_main"
+                android:padding="32dp"
+                android:contentDescription="Logo ứng dụng y tế" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Header Text -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quản lý Hồ sơ"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#00695C"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sức khỏe"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#00897B"
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- Subtitle với icon -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="48dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                app:tint="#00897B"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chăm sóc sức khỏe thông minh mỗi ngày"
+                android:textSize="16sp"
+                android:textColor="#616161"
+                android:textStyle="italic"/>
+        </LinearLayout>
+
+        <!-- Features Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#E0F2F1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Feature 1 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="✓"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/white"
+                        android:background="@android:drawable/btn_default"
+                        android:backgroundTint="#00897B"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Lưu trữ hồ sơ bệnh án an toàn"
+                        android:textSize="14sp"
+                        android:textColor="#424242"/>
+                </LinearLayout>
+
+                <!-- Feature 2 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
+
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="✓"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/white"
+                        android:background="@android:drawable/btn_default"
+                        android:backgroundTint="#00897B"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Theo dõi sức khỏe thường xuyên"
+                        android:textSize="14sp"
+                        android:textColor="#424242"/>
+                </LinearLayout>
+
+                <!-- Feature 3 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="✓"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/white"
+                        android:background="@android:drawable/btn_default"
+                        android:backgroundTint="#00897B"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Kết nối với bác sĩ dễ dàng"
+                        android:textSize="14sp"
+                        android:textColor="#424242"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Login Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogin"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="Đăng nhập"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:cornerRadius="32dp"
+            app:backgroundTint="#00897B"
+            app:elevation="6dp"
+            app:icon="@android:drawable/ic_lock_lock"
+            app:iconGravity="textStart"
+            app:iconTint="@android:color/white"
+            app:iconSize="24dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Register Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:text="Đăng ký tài khoản"
+            android:textSize="18sp"
+            android:textColor="#00897B"
+            android:textStyle="bold"
+            app:cornerRadius="32dp"
+            app:strokeColor="#00897B"
+            app:strokeWidth="2dp"
+            app:backgroundTint="@android:color/white"
+            app:elevation="2dp"
+            app:icon="@android:drawable/ic_input_add"
+            app:iconGravity="textStart"
+            app:iconTint="#00897B"
+            app:iconSize="24dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Footer Info -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🔒 "
+                android:textSize="16sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dữ liệu được bảo mật an toàn"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:textStyle="italic"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

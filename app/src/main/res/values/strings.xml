@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">HealthP</string>
+
+    <!-- Menu items -->
+    <string name="menu_supply">Cung Dưỡng\nYêu Thương</string>
+    <string name="menu_exercise">Theo dõi\nvận động</string>
+    <string name="menu_my_health">Sức khỏe\ncủa tôi</string>
+    <string name="menu_consultant">Tư vấn\nsức khỏe</string>
+
+    <!-- Health score section -->
+    <string name="health_score_title">CHỈ SỐ SỨC KHỎE CỦA BẠN LÀ BAO NHIÊU ?</string>
+    <string name="btn_learn_more">Tìm hiểu ngay</string>
+
+    <!-- Challenge section -->
+    <string name="challenge_section_title">Thử thách Sống khỏe</string>
+    <string name="view_all">Tất cả ></string>
+    <string name="btn_join">Tham gia</string>
+    <string name="personal_tag">Cá nhân</string>
+    <string name="team_tag">Nhóm</string>
+    <string name="participants_format">%d người tham gia</string>
+    <string name="days_left_format">Còn lại %d ngày</string>
+
+    <!-- Doctor section -->
+    <string name="doctor_section_title">Tư vấn sức khỏe trực tuyến</string>
+    <string name="btn_book_consultation">Đặt hẹn tư vấn</string>
+    <string name="btn_find_channel">Tìm mạch</string>
+    <string name="experience_format">%d năm kinh nghiệm</string>
+    <string name="rating_format">%.1f</string>
+
+    <!-- Common -->
+    <string name="back">Quay lại</string>
+    <string name="more">Xem thêm</string>
+    <string name="loading">Đang tải...</string>
+    <string name="error_loading">Không thể tải dữ liệu</string>
+    <string name="retry">Thử lại</string>
+
+    <!-- Appointment -->
+    <string name="book_appointment">Đặt lịch hẹn</string>
+    <string name="my_appointments">Lịch hẹn của tôi</string>
+    <string name="patient_name">Họ và tên bệnh nhân</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="select_date">Chọn ngày khám</string>
+    <string name="select_time">Chọn giờ khám</string>
+    <string name="reason">Lý do khám</string>
+    <string name="confirm_appointment">Xác nhận đặt lịch</string>
+    <string name="appointment_fee">Phí tư vấn</string>
+    <string name="cancel_appointment">Hủy lịch</string>
+    <string name="view_detail">Chi tiết</string>
+    <string name="upcoming">Sắp tới</string>
+    <string name="completed">Đã hoàn thành</string>
+    <string name="cancelled">Đã hủy</string>
+
+    <!-- BMI Calculator -->
+    <string name="bmi_calculator">Tính chỉ số BMI</string>
+    <string name="bmi_what_is">BMI là gì?</string>
+    <string name="bmi_description">BMI (Body Mass Index) là chỉ số khối cơ thể, giúp đánh giá tình trạng cân nặng so với chiều cao của bạn.</string>
+    <string name="gender">Giới tính</string>
+    <string name="male">Nam</string>
+    <string name="female">Nữ</string>
+    <string name="age">Tuổi</string>
+    <string name="height">Chiều cao</string>
+    <string name="weight">Cân nặng</string>
+    <string name="calculate_bmi">Tính BMI</string>
+    <string name="your_bmi">Chỉ số BMI của bạn</string>
+    <string name="bmi_classification">Bảng phân loại BMI</string>
+    <string name="advice_title">💡 Lời khuyên</string>
+    <string name="view_bmi_history">Xem lịch sử BMI</string>
+
+    <!-- BMI Categories -->
+    <string name="bmi_underweight">Thiếu cân</string>
+    <string name="bmi_normal">Bình thường</string>
+    <string name="bmi_overweight">Thừa cân</string>
+    <string name="bmi_obese1">Béo phì độ I</string>
+    <string name="bmi_obese2">Béo phì độ II</string>
+
+    <!-- Toast messages -->
+    <string name="toast_join_challenge">Tham gia: %s</string>
+    <string name="toast_book_doctor">Đặt hẹn với %s</string>
+    <string name="toast_find_channel">Tim mạch</string>
+    <string name="toast_more_info">Xem thêm thông tin</string>
+</resources>

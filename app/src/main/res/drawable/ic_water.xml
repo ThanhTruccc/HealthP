@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Hình giọt nước -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M12,2C12,2 5,10 5,15.5C5,19.09 7.91,22 11.5,22C15.09,22 18,19.09 18,15.5C18,10 12,2 12,2zM11.5,20C9.01,20 7,17.99 7,15.5C7,12.82 10.45,7.97 11.5,6.56C12.55,7.97 16,12.82 16,15.5C16,17.99 13.99,20 11.5,20z"/>
+</vector>

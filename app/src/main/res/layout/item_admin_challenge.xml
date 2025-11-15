@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Image -->
+        <ImageView
+            android:id="@+id/img_challenge_admin"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/challenge_4" />
+
+        <!-- Content -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_challenge_title_admin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thử thách Giờ - Lan tỏa"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <!-- Participants -->
+            <TextView
+                android:id="@+id/tv_participants_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2249 người tham gia"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
+                android:layout_marginTop="4dp"
+                android:drawableStart="@drawable/ic_people"
+                android:drawablePadding="4dp" />
+
+            <!-- Duration -->
+            <TextView
+                android:id="@+id/tv_duration_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/11/2025 - 30/11/2025"
+                android:textSize="12sp"
+                android:textColor="@color/gray"
+                android:layout_marginTop="2dp"
+                android:drawableStart="@drawable/ic_calendar"
+                android:drawablePadding="4dp" />
+
+            <!-- Status -->
+            <TextView
+                android:id="@+id/tv_status_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đang diễn ra"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp" />
+
+            <!-- Action buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="end">
+
+                <ImageButton
+                    android:id="@+id/btn_edit_challenge"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_edit"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Edit" />
+
+                <ImageButton
+                    android:id="@+id/btn_delete_challenge"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_delete"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Delete"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

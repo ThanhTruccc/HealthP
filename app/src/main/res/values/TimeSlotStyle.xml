@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Style cho Time Slot (khung giờ) mặc định -->
+    <style name="TimeSlotStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/bg_time_slot_default</item>
+    </style>
+
+    <!-- Style khi khung giờ được chọn -->
+    <style name="TimeSlotSelectedStyle" parent="TimeSlotStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/bg_time_slot_selected</item>
+    </style>
+
+    <!-- Style khi khung giờ bị khóa (đã đặt) -->
+    <style name="TimeSlotDisabledStyle" parent="TimeSlotStyle">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:background">@drawable/bg_time_slot_disabled</item>
+    </style>
+
+</resources>

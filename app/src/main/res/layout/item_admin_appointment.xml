@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Patient Name + Status -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_patient_name_admin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nguyễn Văn A"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/tv_status_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chờ xác nhận"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FF9800"
+                android:background="@drawable/status_badge"
+                android:padding="6dp" />
+        </LinearLayout>
+
+        <!-- Phone -->
+        <TextView
+            android:id="@+id/tv_phone_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📱 0901234567"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp" />
+
+        <!-- Doctor -->
+        <TextView
+            android:id="@+id/tv_doctor_name_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="👨‍⚕️ BS: Phạm Thị Xuân Mai"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp" />
+
+        <!-- Date Time -->
+        <TextView
+            android:id="@+id/tv_date_time_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📅 25/10/2025 - 09:00"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp" />
+
+        <!-- Reason -->
+        <TextView
+            android:id="@+id/tv_reason_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📋 Khám tổng quát"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp" />
+
+        <!-- Fee -->
+        <TextView
+            android:id="@+id/tv_fee_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💰 200,000 VNĐ"
+            android:textSize="14sp"
+            android:textColor="#4CAF50"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <!-- Confirm Button (for pending) -->
+            <Button
+                android:id="@+id/btn_confirm_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Xác nhận"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4CAF50"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <!-- Complete Button (for confirmed) -->
+            <Button
+                android:id="@+id/btn_complete_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Hoàn thành"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#2196F3"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <!-- Cancel Button -->
+            <Button
+                android:id="@+id/btn_cancel_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Hủy"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF9800"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Delete Button -->
+            <Button
+                android:id="@+id/btn_delete_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="Xóa"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#F44336" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Nắp lọ -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M7,3h10v2H7V3z" />
+    <!-- Thân lọ -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M17,7V5H7v2C5.9,7 5,7.9 5,9v10c0,1.1 0.9,2 2,2h10c1.1,0 2,-0.9 2,-2V9c0,-1.1 -0.9,-2 -2,-2zM17,19H7V9h10v10z" />
+    <!-- Dấu cộng y tế ở giữa -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M13,10h-2v3H8v2h3v3h2v-3h3v-2h-3v-3z" />
+</vector>

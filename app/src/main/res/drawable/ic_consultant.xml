@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Đầu và tai nghe -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12,2a9,9 0,0 0,-9 9v4a3,3 0,0 0,3 3h2v-2H6a1,1 0,0 1,-1 -1v-4a7,7 0,0 1,14 0v4a1,1 0,0 1,-1 1h-2v2h2a3,3 0,0 0,3 -3v-4a9,9 0,0 0,-9 -9z" />
+    <!-- Mặt người -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12,13a2,2 0,1 1,0 -4 2,2 0,0 1,0 4z" />
+    <!-- Bong bóng thoại bên phải -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M18,15v5l3,-1.5L18,17z" />
+</vector>

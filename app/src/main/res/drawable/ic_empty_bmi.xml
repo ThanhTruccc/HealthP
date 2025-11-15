@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Hình người -->
+    <path
+        android:fillColor="#BDBDBD"
+        android:pathData="M12,5.9c1.16,0 2.1,-0.94 2.1,-2.1S13.16,1.7 12,1.7 9.9,2.64 9.9,3.8 10.84,5.9 12,5.9zM18,8h-3v12h-2v-6h-2v6H9V8H6V6h12v2z" />
+    <!-- Dấu gạch chéo thể hiện “rỗng” -->
+    <path
+        android:strokeColor="#9E9E9E"
+        android:strokeWidth="1.5"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M4,20 L20,4" />
+</vector>
