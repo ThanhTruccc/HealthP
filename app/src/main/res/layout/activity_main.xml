@@ -102,10 +102,8 @@
                     <TextView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:text="✓"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:background="@android:drawable/btn_default"
+                        android:background="@drawable/ic_tick"
                         android:backgroundTint="#00897B"
                         android:gravity="center"
                         android:layout_marginEnd="12dp"/>
@@ -130,10 +128,8 @@
                     <TextView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:text="✓"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:background="@android:drawable/btn_default"
+                        android:background="@drawable/ic_tick"
                         android:backgroundTint="#00897B"
                         android:gravity="center"
                         android:layout_marginEnd="12dp"/>
@@ -157,10 +153,8 @@
                     <TextView
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:text="✓"
                         android:textSize="20sp"
-                        android:textColor="@android:color/white"
-                        android:background="@android:drawable/btn_default"
+                        android:background="@drawable/ic_tick"
                         android:backgroundTint="#00897B"
                         android:gravity="center"
                         android:layout_marginEnd="12dp"/>
@@ -188,7 +182,6 @@
             app:cornerRadius="32dp"
             app:backgroundTint="#00897B"
             app:elevation="6dp"
-            app:icon="@android:drawable/ic_lock_lock"
             app:iconGravity="textStart"
             app:iconTint="@android:color/white"
             app:iconSize="24dp"
@@ -208,7 +201,6 @@
             app:strokeWidth="2dp"
             app:backgroundTint="@android:color/white"
             app:elevation="2dp"
-            app:icon="@android:drawable/ic_input_add"
             app:iconGravity="textStart"
             app:iconTint="#00897B"
             app:iconSize="24dp"

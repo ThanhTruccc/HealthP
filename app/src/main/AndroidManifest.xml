@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Permissions -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="false" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
@@ -13,6 +17,12 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.sensor.stepdetector"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -78,5 +88,17 @@
         <activity android:name=".RewardHistoryActivity" android:exported="false" />
         <activity android:name=".MedicationReminderActivity" android:exported="false" />
         <activity android:name=".LearnMoreActivity" android:exported="false" />
+        <activity android:name=".ExerciseTrackerActivity" android:exported="false" />
+        <activity android:name=".StepCounterActivity" android:exported="false" />
+        <service
+            android:name=".StepCounterService" android:enabled="true"
+            android:exported="false" android:foregroundServiceType="health" />
+        <activity
+            android:name=".StepTrackerActivity" android:exported="false" android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <activity android:name=".DoctorDashboardActivity" android:exported="false" />
+        <activity android:name=".AppointmentDetailActivity" android:exported="false" />
+        <activity android:name=".CreateMedicalRecordActivity" android:exported="false" />
+        <activity android:name=".UnifiedStepActivity" android:exported="false" />
     </application>
 </manifest>

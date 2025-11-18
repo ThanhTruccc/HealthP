@@ -242,7 +242,7 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
 
         int userEmailIndex = cursor.getColumnIndex("user_email");
         if (userEmailIndex >= 0) {
-            apt.setUserEmail(cursor.getString(userEmailIndex));
+            apt.setPatientEmail(cursor.getString(userEmailIndex));
         }
 
         apt.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));

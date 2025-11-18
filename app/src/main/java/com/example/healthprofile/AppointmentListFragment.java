@@ -164,7 +164,7 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
                     // Kiểm tra xem cột user_email có tồn tại không
                     int userEmailIndex = cursor.getColumnIndex("user_email");
                     if (userEmailIndex >= 0) {
-                        apt.setUserEmail(cursor.getString(userEmailIndex));
+                        apt.setPatientEmail(cursor.getString(userEmailIndex));
                     }
 
                     apt.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));

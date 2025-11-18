@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         db = openOrCreateDatabase("health_profile.db", MODE_PRIVATE, null);
-
+        //deleteDatabase("health_profile.db");
         createTables();
         insertSampleData();
 
@@ -53,13 +53,15 @@ public class MainActivity extends Activity {
         db.execSQL("CREATE TABLE IF NOT EXISTS appointments (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "user_email TEXT, " +
+                "doctor_id INTEGER NOT NULL, " +
                 "doctor_name TEXT NOT NULL, " +
                 "patient_name TEXT NOT NULL, " +
                 "phone TEXT NOT NULL, " +
-                "date TEXT NOT NULL, " +
-                "time TEXT NOT NULL, " +
+                "appointment_date TEXT NOT NULL, " +
+                "appointment_time TEXT NOT NULL, " +
                 "reason TEXT, " +
                 "status TEXT DEFAULT 'pending', " +
+                "notes TEXT, " +
                 "timestamp INTEGER, " +
                 "fee INTEGER DEFAULT 200000)");
 
@@ -174,9 +176,61 @@ public class MainActivity extends Activity {
                 "is_active INTEGER DEFAULT 1, " +
                 "created_at INTEGER, " +
                 "updated_at INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS user_doctors (" +
+                "user_id INTEGER PRIMARY KEY, " +
+                "doctor_id INTEGER NOT NULL, " +
+                "specialization TEXT, " +
+                "license_number TEXT, " +
+                "FOREIGN KEY (user_id) REFERENCES user(id), " +
+                "FOREIGN KEY (doctor_id) REFERENCES doctors(id))");
+
+        // Bảng bệnh án
+        db.execSQL("CREATE TABLE IF NOT EXISTS medical_records (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "appointment_id INTEGER, " +
+                "patient_email TEXT NOT NULL, " +
+                "patient_name TEXT NOT NULL, " +
+                "doctor_user_id INTEGER NOT NULL, " +
+                "doctor_name TEXT NOT NULL, " +
+                "visit_date TEXT NOT NULL, " +
+                "chief_complaint TEXT, " +
+                "diagnosis TEXT, " +
+                "symptoms TEXT, " +
+                "blood_pressure TEXT, " +
+                "temperature REAL, " +
+                "heart_rate INTEGER, " +
+                "weight REAL, " +
+                "height REAL, " +
+                "treatment_plan TEXT, " +
+                "notes TEXT, " +
+                "created_at INTEGER)");
+
+        // Bảng đơn thuốc
+        db.execSQL("CREATE TABLE IF NOT EXISTS prescriptions (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "medical_record_id INTEGER NOT NULL, " +
+                "patient_email TEXT NOT NULL, " +
+                "doctor_user_id INTEGER NOT NULL, " +
+                "medication_name TEXT NOT NULL, " +
+                "dosage TEXT NOT NULL, " +
+                "frequency TEXT NOT NULL, " +
+                "duration TEXT NOT NULL, " +
+                "instructions TEXT, " +
+                "quantity INTEGER, " +
+                "created_at INTEGER)");
+
+        // Bảng thuốc
+        db.execSQL("CREATE TABLE IF NOT EXISTS medications (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "name TEXT NOT NULL, " +
+                "generic_name TEXT, " +
+                "category TEXT, " +
+                "unit TEXT, " +
+                "description TEXT)");
     }
 
     private void insertSampleData() {
+
         // Insert sample users
         Cursor check = db.rawQuery("SELECT COUNT(*) FROM user", null);
         if (check.moveToFirst() && check.getInt(0) == 0) {
@@ -190,6 +244,17 @@ public class MainActivity extends Activity {
                     "('user123', 'Nguyễn Ngọc Huy', 'huyngoc@gmail.com', '0923456789', 'user')");
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
                     "('user123', 'Phạm Thị Dung', 'phamthidung@gmail.com', '0934567890', 'user')");
+
+            db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
+                    "('doctor123', 'BS. Phạm Thị Xuân Mai', 'bsmai@hospital.com', '0901111111', 'doctor')");
+            db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
+                    "('doctor123', 'BS. Nguyễn Văn Hoàng', 'bshoang@hospital.com', '0902222222', 'doctor')");
+            db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
+                    "('doctor123', 'BS. Lê Thị Thu Hà', 'bsthuhà@hospital.com', '0903333333', 'doctor')");
+            db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
+                    "('doctor123', 'BS. Lê Quang Huy', 'bshuy@hospital.com', '0904444444', 'doctor')");
+            db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
+                    "('doctor123', 'BS. Phạm Thị Xuân Vy', 'bsvy@hospital.com', '0905555555', 'doctor')");
         }
         check.close();
 
@@ -276,6 +341,55 @@ public class MainActivity extends Activity {
                             startDate6, endDate6, 21, 456, 70, R.drawable.challenge_meditation, "active"});
         }
         checkChallenges.close();
+
+        // Link bác sĩ user với doctor info
+        Cursor checkLink = db.rawQuery("SELECT COUNT(*) FROM user_doctors", null);
+        if (checkLink.moveToFirst() && checkLink.getInt(0) == 0) {
+            // Lấy user_id của bác sĩ
+            Cursor doctorUsers = db.rawQuery("SELECT id, email FROM user WHERE role = 'doctor'", null);
+
+            if (doctorUsers.moveToFirst()) {
+                do {
+                    int userId = doctorUsers.getInt(0);
+                    String email = doctorUsers.getString(1);
+
+                    // Tìm doctor tương ứng trong bảng doctors
+                    Cursor doctor = db.rawQuery("SELECT id FROM doctors WHERE name LIKE '%' || " +
+                            "(SELECT fullName FROM user WHERE id = " + userId + ") || '%' LIMIT 1", null);
+
+                    if (doctor.moveToFirst()) {
+                        int doctorId = doctor.getInt(0);
+
+                        // Lấy specialization từ doctors
+                        Cursor spec = db.rawQuery("SELECT specialty FROM doctors WHERE id = " + doctorId, null);
+                        String specialization = "";
+                        if (spec.moveToFirst()) {
+                            specialization = spec.getString(0);
+                        }
+                        spec.close();
+
+                        // Link user_id với doctor_id
+                        db.execSQL("INSERT INTO user_doctors (user_id, doctor_id, specialization, license_number) " +
+                                "VALUES (" + userId + ", " + doctorId + ", '" + specialization + "', 'BS" + userId + "')");
+                    }
+                    doctor.close();
+                } while (doctorUsers.moveToNext());
+            }
+            doctorUsers.close();
+        }
+        checkLink.close();
+
+        // Thêm thuốc mẫu
+        Cursor checkMeds = db.rawQuery("SELECT COUNT(*) FROM medications", null);
+        if (checkMeds.moveToFirst() && checkMeds.getInt(0) == 0) {
+            db.execSQL("INSERT INTO medications (name, generic_name, category, unit, description) VALUES " +
+                    "('Paracetamol 500mg', 'Paracetamol', 'Giảm đau - Hạ sốt', 'Viên', 'Giảm đau, hạ sốt'), " +
+                    "('Amoxicillin 500mg', 'Amoxicillin', 'Kháng sinh', 'Viên', 'Kháng sinh phổ rộng'), " +
+                    "('Omeprazole 20mg', 'Omeprazole', 'Tiêu hóa', 'Viên', 'Điều trị dạ dày'), " +
+                    "('Cetirizine 10mg', 'Cetirizine', 'Chống dị ứng', 'Viên', 'Chống dị ứng'), " +
+                    "('Vitamin C 1000mg', 'Ascorbic Acid', 'Vitamin', 'Viên', 'Bổ sung vitamin C')");
+        }
+        checkMeds.close();
     }
 
     @Override

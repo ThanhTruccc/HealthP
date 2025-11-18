@@ -2,32 +2,38 @@ package com.example.healthprofile.model;
 
 public class Appointment {
     private int id;
-    private String userEmail;  // ← THÊM FIELD NÀY
-    private String doctorName;
-    private String patientName;
-    private String phone;
-    private String date;
-    private String time;
-    private String reason;
-    private String status; // pending, confirmed, completed, cancelled
-    private long timestamp;
-    private int fee;
+    private String patientEmail; // Email của bệnh nhân
+
+    private String patientName;      // Tên bệnh nhân
+    private int doctorId;            // ID của bác sĩ
+    private String doctorName;       // Tên bác sĩ
+    private String phone;            // Số điện thoại
+    private String appointmentDate;  // Ngày hẹn (yyyy-MM-dd)
+    private String appointmentTime;  // Giờ hẹn (HH:mm)
+    private String reason;           // Lý do khám
+    private String status;           // pending, confirmed, completed, cancelled
+    private String notes;            // Ghi chú từ bác sĩ
+    private long timestamp;          // Thời gian tạo
+    private int fee;                 // Phí khám
 
     // Constructor rỗng
     public Appointment() {
     }
 
     // Constructor đầy đủ
-    public Appointment(String userEmail, String doctorName, String patientName, String phone,
-                       String date, String time, String reason, String status, int fee) {
-        this.userEmail = userEmail;
-        this.doctorName = doctorName;
+    public Appointment(String patientEmail, String patientName, int doctorId, String doctorName,
+                       String phone, String appointmentDate, String appointmentTime,
+                       String reason, String status, int fee) {
+        this.patientEmail = patientEmail;
         this.patientName = patientName;
+        this.doctorId = doctorId;
+        this.doctorName = doctorName;
         this.phone = phone;
-        this.date = date;
-        this.time = time;
+        this.appointmentDate = appointmentDate;
+        this.appointmentTime = appointmentTime;
         this.reason = reason;
         this.status = status;
+        this.notes = "";
         this.timestamp = System.currentTimeMillis();
         this.fee = fee;
     }
@@ -41,20 +47,12 @@ public class Appointment {
         this.id = id;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getPatientEmail() {
+        return patientEmail;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    public String getDoctorName() {
-        return doctorName;
-    }
-
-    public void setDoctorName(String doctorName) {
-        this.doctorName = doctorName;
+    public void setPatientEmail(String patientEmail) {
+        this.patientEmail = patientEmail;
     }
 
     public String getPatientName() {
@@ -65,6 +63,22 @@ public class Appointment {
         this.patientName = patientName;
     }
 
+    public int getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(int doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public String getDoctorName() {
+        return doctorName;
+    }
+
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -73,20 +87,20 @@ public class Appointment {
         this.phone = phone;
     }
 
-    public String getDate() {
-        return date;
+    public String getAppointmentDate() {
+        return appointmentDate;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setAppointmentDate(String appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 
-    public String getTime() {
-        return time;
+    public String getAppointmentTime() {
+        return appointmentTime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
     }
 
     public String getReason() {
@@ -105,6 +119,14 @@ public class Appointment {
         this.status = status;
     }
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public long getTimestamp() {
         return timestamp;
     }
@@ -121,13 +143,30 @@ public class Appointment {
         this.fee = fee;
     }
 
-    // Helper methods
-    public String getFormattedDate() {
-        return date;
+    // Helper methods - Backward compatibility
+    @Deprecated
+    public String getDate() {
+        return appointmentDate;
     }
 
-    public String getFormattedTime() {
-        return time;
+    @Deprecated
+    public void setDate(String date) {
+        this.appointmentDate = date;
+    }
+
+    @Deprecated
+    public String getTime() {
+        return appointmentTime;
+    }
+
+    @Deprecated
+    public void setTime(String time) {
+        this.appointmentTime = time;
+    }
+
+    // Formatting methods
+    public String getFormattedDateTime() {
+        return appointmentDate + " - " + appointmentTime;
     }
 
     public String getStatusText() {

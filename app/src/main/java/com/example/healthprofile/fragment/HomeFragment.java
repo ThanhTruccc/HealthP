@@ -19,10 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.healthprofile.BMICalculatorActivity;
+import com.example.healthprofile.BookAppointmentActivity;
 import com.example.healthprofile.ChallengeDetailActivity;
+import com.example.healthprofile.ExerciseTrackerActivity;
 import com.example.healthprofile.HealthGaugeView;
 import com.example.healthprofile.MyAppointmentsActivity;
 import com.example.healthprofile.R;
+import com.example.healthprofile.StepCounterActivity;
+import com.example.healthprofile.StepTrackerActivity;
+import com.example.healthprofile.UnifiedStepActivity;
 import com.example.healthprofile.adapter.ChallengeAdapter;
 import com.example.healthprofile.model.Challenge;
 
@@ -105,7 +110,7 @@ public class HomeFragment extends Fragment implements ChallengeAdapter.OnChallen
         View menuSupply = view.findViewById(R.id.menu_supply);
         if (menuSupply != null) {
             menuSupply.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), MyAppointmentsActivity.class);
+                Intent intent = new Intent(getContext(), StepTrackerActivity.class);
                 startActivity(intent);
             });
         }
@@ -114,7 +119,8 @@ public class HomeFragment extends Fragment implements ChallengeAdapter.OnChallen
         View menuExercise = view.findViewById(R.id.menu_exercise);
         if (menuExercise != null) {
             menuExercise.setOnClickListener(v -> {
-                Toast.makeText(getContext(), "Theo dõi vận động", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), UnifiedStepActivity.class);
+                startActivity(intent);
             });
         }
 
@@ -131,7 +137,7 @@ public class HomeFragment extends Fragment implements ChallengeAdapter.OnChallen
         View menuConsultant = view.findViewById(R.id.menu_consultant);
         if (menuConsultant != null) {
             menuConsultant.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), ServiceFragment.class);
+                Intent intent = new Intent(getContext(), BookAppointmentActivity.class);
                 startActivity(intent);
             });
         }

@@ -74,7 +74,10 @@ public class LoginActivity extends AppCompatActivity {
                 if ("admin".equals(role)) {
                     // Nếu là admin -> chuyển đến AdminDashboard
                     intent = new Intent(this, AdminManagementActivity.class);
-                } else {
+                } else if ("doctor".equals(role)) {
+                    // Bác sĩ -> DoctorDashboard
+                    intent = new Intent(this, DoctorDashboardActivity.class);
+                }  else {
                     // Nếu là user thường -> chuyển đến Home
                     intent = new Intent(this, HomeActivity.class);
                 }

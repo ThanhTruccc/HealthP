@@ -1,7 +1,6 @@
 package com.example.healthprofile.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     private Context context;
     private List<Appointment> appointments;
     private OnAppointmentActionListener listener;
-    private int position;
 
     public interface OnAppointmentActionListener {
         void onCancelAppointment(Appointment appointment, int position);
@@ -46,15 +44,13 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull AppointmentViewHolder holder, int position) {
-        this.position = position;
         Appointment appointment = appointments.get(position);
 
         holder.tvDoctorName.setText(appointment.getDoctorName());
-        holder.tvDateTime.setText(appointment.getDate() + " - " + appointment.getTime());
+        holder.tvDateTime.setText(appointment.getFormattedDateTime());
         holder.tvPatientName.setText(appointment.getPatientName());
         holder.tvReason.setText(appointment.getReason());
         holder.tvFee.setText(appointment.getFeeFormatted());
-
 
         // Show/hide action buttons based on status
         if (appointment.getStatus().equals("completed") || appointment.getStatus().equals("cancelled")) {
@@ -63,19 +59,11 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             holder.layoutActions.setVisibility(View.VISIBLE);
         }
 
-        holder.btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCancelDialog(appointment, position);
-            }
-        });
+        holder.btnCancel.setOnClickListener(v -> showCancelDialog(appointment, position));
 
-        holder.btnViewDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    listener.onViewDetail(appointment);
-                }
+        holder.btnViewDetail.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onViewDetail(appointment);
             }
         });
     }
@@ -97,9 +85,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
             Toast.makeText(context, "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
         });
 
-        builder.setNegativeButton("Đóng", (dialog, which) -> {
-            dialog.dismiss();
-        });
+        builder.setNegativeButton("Đóng", (dialog, which) -> dialog.dismiss());
 
         builder.show();
     }

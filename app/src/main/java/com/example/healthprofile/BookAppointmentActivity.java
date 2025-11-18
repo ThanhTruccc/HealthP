@@ -44,6 +44,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
     private String selectedDate = "";
     private String selectedTime = "";
     private TextView selectedTimeSlot = null;
+    private int doctorId;
     private String doctorName;
     private float doctorRating;
     private int doctorExperience;
@@ -117,6 +118,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
 
     private void loadDoctorInfo() {
         // Get doctor info from intent
+        doctorId = getIntent().getIntExtra("doctor_id", 0);
         doctorName = getIntent().getStringExtra("doctor_name");
         doctorRating = getIntent().getFloatExtra("doctor_rating", 0f);
         doctorExperience = getIntent().getIntExtra("doctor_experience", 0);
@@ -343,6 +345,7 @@ public class BookAppointmentActivity extends AppCompatActivity {
             }
 
             // Dữ liệu Appointment (giả lập)
+            int docId = doctorId;
             String docName = doctorName;
             String patName = patientName;
             String apPhone = phone;
@@ -355,8 +358,9 @@ public class BookAppointmentActivity extends AppCompatActivity {
 
             // Câu lệnh SQL INSERT (Sử dụng escapeString để bảo mật cơ bản)
             String sql = "INSERT INTO " + TABLE_APPOINTMENTS +
-                    " (user_email, doctor_name, patient_name, phone, date, time, reason, status, timestamp, fee) " +
+                    " (user_email, doctor_id, doctor_name, patient_name, phone, appointment_date, appointment_time, reason, status, timestamp, fee) " +
                     "VALUES ('" + escapeString(userEmail) + "', " +
+                    docId + ", " +
                     "'" + escapeString(docName) + "', " +
                     "'" + escapeString(patName) + "', " +
                     "'" + escapeString(apPhone) + "', " +
