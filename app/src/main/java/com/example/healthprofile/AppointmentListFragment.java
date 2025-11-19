@@ -1,5 +1,6 @@
 package com.example.healthprofile;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,15 +39,11 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
     private ProgressBar progressBar;
     private String filterStatus;
 
-    // SQLiteDatabase trực tiếp
     private SQLiteDatabase db;
     private String userEmail;
 
-    // Database constants
     private static final String DATABASE_NAME = "health_profile.db";
     private static final String TABLE_APPOINTMENTS = "appointments";
-
-    // ExecutorService thay cho AsyncTask
     private ExecutorService executorService;
     private Handler mainHandler;
 
@@ -109,16 +106,13 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
      * Load appointments từ database theo user email
      */
     private void loadAppointmentsFromDatabase() {
-        // Show progress bar
         if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
         }
 
-        // Execute in background thread
         executorService.execute(() -> {
             List<Appointment> result = getUserAppointmentsByStatus(userEmail, filterStatus);
 
-            // Update UI on main thread
             mainHandler.post(() -> {
                 if (isAdded() && getContext() != null) {
                     updateAppointmentList(result);
@@ -140,18 +134,18 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
                 sql = "SELECT * FROM " + TABLE_APPOINTMENTS +
                         " WHERE user_email = '" + escapeString(userEmail) + "' " +
                         "AND status IN ('pending', 'confirmed') " +
-                        "ORDER BY date DESC, time DESC";
+                        "ORDER BY appointment_date DESC, appointment_time DESC";
             } else if (status.equals("all")) {
                 // Lấy tất cả appointments của user
                 sql = "SELECT * FROM " + TABLE_APPOINTMENTS +
                         " WHERE user_email = '" + escapeString(userEmail) + "' " +
-                        "ORDER BY date DESC, time DESC";
+                        "ORDER BY appointment_date DESC, appointment_time DESC";
             } else {
                 // Lấy theo status cụ thể
                 sql = "SELECT * FROM " + TABLE_APPOINTMENTS +
                         " WHERE user_email = '" + escapeString(userEmail) + "' " +
                         "AND status = '" + escapeString(status) + "' " +
-                        "ORDER BY date DESC, time DESC";
+                        "ORDER BY appointment_date DESC, appointment_time DESC";
             }
 
             Cursor cursor = db.rawQuery(sql, null);
@@ -161,21 +155,84 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
                     Appointment apt = new Appointment();
                     apt.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
 
-                    // Kiểm tra xem cột user_email có tồn tại không
+                    // User email
                     int userEmailIndex = cursor.getColumnIndex("user_email");
-                    if (userEmailIndex >= 0) {
+                    if (userEmailIndex >= 0 && !cursor.isNull(userEmailIndex)) {
                         apt.setPatientEmail(cursor.getString(userEmailIndex));
                     }
 
-                    apt.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));
-                    apt.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("patient_name")));
-                    apt.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
-                    apt.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-                    apt.setTime(cursor.getString(cursor.getColumnIndexOrThrow("time")));
-                    apt.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
-                    apt.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-                    apt.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
-                    apt.setFee(cursor.getInt(cursor.getColumnIndexOrThrow("fee")));
+                    // Doctor info
+                    int doctorIdIndex = cursor.getColumnIndex("doctor_id");
+                    if (doctorIdIndex >= 0 && !cursor.isNull(doctorIdIndex)) {
+                        apt.setDoctorId(cursor.getInt(doctorIdIndex));
+                    }
+
+                    int doctorNameIndex = cursor.getColumnIndex("doctor_name");
+                    if (doctorNameIndex >= 0 && !cursor.isNull(doctorNameIndex)) {
+                        apt.setDoctorName(cursor.getString(doctorNameIndex));
+                    }
+
+                    // Patient info
+                    int patientNameIndex = cursor.getColumnIndex("patient_name");
+                    if (patientNameIndex >= 0 && !cursor.isNull(patientNameIndex)) {
+                        apt.setPatientName(cursor.getString(patientNameIndex));
+                    }
+
+                    int phoneIndex = cursor.getColumnIndex("phone");
+                    if (phoneIndex >= 0 && !cursor.isNull(phoneIndex)) {
+                        apt.setPhone(cursor.getString(phoneIndex));
+                    }
+
+                    // Date and Time - FIXED: Sử dụng appointment_date và appointment_time
+                    int dateIndex = cursor.getColumnIndex("appointment_date");
+                    if (dateIndex >= 0 && !cursor.isNull(dateIndex)) {
+                        apt.setAppointmentDate(cursor.getString(dateIndex));
+                    } else {
+                        // Fallback to old 'date' column if exists
+                        int oldDateIndex = cursor.getColumnIndex("date");
+                        if (oldDateIndex >= 0 && !cursor.isNull(oldDateIndex)) {
+                            apt.setAppointmentDate(cursor.getString(oldDateIndex));
+                        }
+                    }
+
+                    int timeIndex = cursor.getColumnIndex("appointment_time");
+                    if (timeIndex >= 0 && !cursor.isNull(timeIndex)) {
+                        apt.setAppointmentTime(cursor.getString(timeIndex));
+                    } else {
+                        // Fallback to old 'time' column if exists
+                        int oldTimeIndex = cursor.getColumnIndex("time");
+                        if (oldTimeIndex >= 0 && !cursor.isNull(oldTimeIndex)) {
+                            apt.setAppointmentTime(cursor.getString(oldTimeIndex));
+                        }
+                    }
+
+                    // Other info
+                    int reasonIndex = cursor.getColumnIndex("reason");
+                    if (reasonIndex >= 0 && !cursor.isNull(reasonIndex)) {
+                        apt.setReason(cursor.getString(reasonIndex));
+                    }
+
+                    int statusIndex = cursor.getColumnIndex("status");
+                    if (statusIndex >= 0 && !cursor.isNull(statusIndex)) {
+                        apt.setStatus(cursor.getString(statusIndex));
+                    }
+
+                    int notesIndex = cursor.getColumnIndex("notes");
+                    if (notesIndex >= 0 && !cursor.isNull(notesIndex)) {
+                        apt.setNotes(cursor.getString(notesIndex));
+                    }
+
+                    int timestampIndex = cursor.getColumnIndex("timestamp");
+                    if (timestampIndex >= 0 && !cursor.isNull(timestampIndex)) {
+                        apt.setTimestamp(cursor.getLong(timestampIndex));
+                    }
+
+                    int feeIndex = cursor.getColumnIndex("fee");
+                    if (feeIndex >= 0 && !cursor.isNull(feeIndex)) {
+                        apt.setFee(cursor.getInt(feeIndex));
+                    } else {
+                        apt.setFee(200000); // Default fee
+                    }
 
                     appointmentList.add(apt);
                 } while (cursor.moveToNext());
@@ -213,17 +270,25 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
 
     @Override
     public void onCancelAppointment(Appointment appointment, int position) {
-        // Update status trong database (background thread)
-        executorService.execute(() -> {
-            boolean success = updateAppointmentStatus(appointment.getId(), "cancelled");
+        // Show confirmation dialog
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Hủy lịch hẹn")
+                .setMessage("Bạn có chắc chắn muốn hủy lịch hẹn này không?")
+                .setPositiveButton("Hủy lịch", (dialog, which) -> {
+                    // Update status trong database (background thread)
+                    executorService.execute(() -> {
+                        boolean success = updateAppointmentStatus(appointment.getId(), "cancelled");
 
-            // Update UI on main thread
-            mainHandler.post(() -> {
-                if (isAdded() && getContext() != null) {
-                    handleCancelResult(success, position);
-                }
-            });
-        });
+                        // Update UI on main thread
+                        mainHandler.post(() -> {
+                            if (isAdded() && getContext() != null) {
+                                handleCancelResult(success, position);
+                            }
+                        });
+                    });
+                })
+                .setNegativeButton("Đóng", null)
+                .show();
     }
 
     /**
@@ -247,13 +312,20 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
      */
     private void handleCancelResult(boolean success, int position) {
         if (success) {
-            adapter.removeAppointment(position);
-            Toast.makeText(getContext(), "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
+            // Remove from list if we're showing upcoming/pending appointments
+            if (filterStatus.equals("upcoming") || filterStatus.equals("pending")) {
+                adapter.removeAppointment(position);
+                Toast.makeText(getContext(), "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
 
-            // Show empty state if no more appointments
-            if (appointments.isEmpty()) {
-                tvEmpty.setVisibility(View.VISIBLE);
-                recyclerView.setVisibility(View.GONE);
+                // Show empty state if no more appointments
+                if (appointments.isEmpty()) {
+                    tvEmpty.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                }
+            } else {
+                // Just reload data for "all" or other filters
+                loadAppointmentsFromDatabase();
+                Toast.makeText(getContext(), "Đã hủy lịch hẹn", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getContext(), "Lỗi khi hủy lịch hẹn", Toast.LENGTH_SHORT).show();
@@ -263,10 +335,10 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
     @Override
     public void onViewDetail(Appointment appointment) {
         if (getContext() != null) {
-            Toast.makeText(getContext(), "Chi tiết lịch hẹn: " + appointment.getDoctorName(),
-                    Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getContext(), AppointmentDetailActivity.class);
+            intent.putExtra("appointment_id", appointment.getId());
+            startActivity(intent);
         }
-        // TODO: Open detail activity
     }
 
     /**
@@ -282,6 +354,13 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
     private String escapeString(String str) {
         if (str == null) return "";
         return str.replace("'", "''");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh data when fragment resumes
+        loadAppointmentsFromDatabase();
     }
 
     @Override
