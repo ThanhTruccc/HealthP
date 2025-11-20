@@ -21,7 +21,7 @@ import com.example.healthprofile.model.PrescriptionItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewMedicalRecordDetailActivity extends AppCompatActivity {
+public class MedicalRecordDetailActivity extends AppCompatActivity {
 
     private TextView tvPatientName, tvDoctorName, tvVisitDate;
     private TextView tvComplaint, tvSymptoms, tvDiagnosis;
@@ -40,7 +40,7 @@ public class ViewMedicalRecordDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_medical_record_detail);
+        setContentView(R.layout.activity_medical_record_detail);
 
         recordId = getIntent().getIntExtra("record_id", 0);
         if (recordId == 0) {
