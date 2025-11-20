@@ -87,7 +87,7 @@
         <activity android:name=".AdminChallengeManagementActivity" android:exported="false" />
         <activity android:name=".RewardHistoryActivity" android:exported="false" />
         <activity android:name=".MedicationReminderActivity" android:exported="false" />
-        <activity android:name=".LearnMoreActivity" android:exported="false" />
+
         <activity android:name=".ExerciseTrackerActivity" android:exported="false" />
         <activity android:name=".StepCounterActivity" android:exported="false" />
         <service

@@ -3,7 +3,7 @@
     android:shape="oval">
 
     <!-- Màu nền cho badge -->
-    <solid android:color="@color/teal_200" />
+    <solid android:color="#4778E0" />
 
     <!-- Viền mảnh -->
     <stroke

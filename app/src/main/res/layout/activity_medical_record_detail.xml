@@ -34,7 +34,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_back"
-                    app:tint="#4CAF50" />
+                    app:tint="@color/black" />
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            app:cardBackgroundColor="#E8F5E9"
+            app:cardBackgroundColor="#E3F2FD"
             android:layout_marginBottom="16dp">
 
             <LinearLayout
@@ -74,7 +74,7 @@
                     android:text="Nguyễn Văn A"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#2E7D32"/>
+                    android:textColor="#1D57B8"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -88,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:text="BS. Nguyễn Văn B"
                         android:textSize="14sp"
-                        android:textColor="#558B2F"
+                        android:textColor="#3A64D5"
                         android:layout_marginEnd="16dp"/>
 
                     <TextView
@@ -97,7 +97,7 @@
                         android:layout_height="wrap_content"
                         android:text="15/11/2025"
                         android:textSize="14sp"
-                        android:textColor="#558B2F"/>
+                        android:textColor="#3A64D5"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -186,7 +186,7 @@
                     android:layout_height="wrap_content"
                     android:text="Chẩn đoán"
                     android:textSize="12sp"
-                    android:textColor="#E65100"
+                    android:textColor="#FD5049"
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
 
@@ -196,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:text="Viêm họng cấp"
                     android:textSize="16sp"
-                    android:textColor="#F57C00"
+                    android:textColor="@color/primary_red_dark"
                     android:textStyle="bold"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

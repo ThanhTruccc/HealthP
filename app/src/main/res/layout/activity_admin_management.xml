@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/gradient_background"
+            android:background="@color/background_light_peach"
             android:padding="24dp"
             android:elevation="4dp">
 
@@ -28,14 +28,14 @@
                 android:text="Xin chào, Admin"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/white" />
+                android:textColor="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Bảng điều khiển quản trị"
                 android:textSize="14sp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_marginTop="4dp" />
         </LinearLayout>
 

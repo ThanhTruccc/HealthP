@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="#FFFFFF">
 
     <!-- Top Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#4CAF50"
+        android:background="@color/background_light_peach"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -23,15 +23,15 @@
             android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            app:tint="#FFFFFF" />
+            android:src="@drawable/ic_back"
+            app:tint="#000000" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Tạo bệnh án"
-            android:textColor="#FFFFFF"
+            android:textColor="#000000"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#E8F5E9"
+                app:cardBackgroundColor="#E3F2FD"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="2dp">
 
@@ -69,7 +69,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Bệnh nhân: Nguyễn Văn A"
-                        android:textColor="#2E7D32"
+                        android:textColor="#1D57B8"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -79,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:text="Ngày khám: 16/11/2025"
-                        android:textColor="#558B2F"
+                        android:textColor="#3A64D5"
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -302,7 +302,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="+ Thêm thuốc"
-                    android:textColor="#4CAF50" />
+                    android:textColor="#266BBA" />
 
             </LinearLayout>
 
@@ -338,7 +338,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                android:backgroundTint="#4CAF50"
+                android:backgroundTint="@color/primary_red_dark"
                 android:text="Lưu bệnh án"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"

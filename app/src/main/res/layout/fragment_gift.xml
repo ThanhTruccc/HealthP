@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
+    android:background="@color/background_light_peach">
 
     <!-- Header với điểm thưởng -->
     <androidx.cardview.widget.CardView
@@ -13,20 +13,20 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp"
-        android:background="@drawable/gradient_primary">
+        android:background="#1976D2">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp"
-            android:background="@drawable/gradient_primary">
+            android:background="#E3F2FD">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Điểm Thưởng Của Bạn"
-                android:textColor="@android:color/white"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:alpha="0.9"/>
 
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 điểm"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/black"
                     android:textSize="32sp"
                     android:textStyle="bold"
                     android:layout_marginStart="12dp"/>
@@ -59,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đặt lịch hoặc lưu hồ sơ để nhận +10 điểm"
-                android:textColor="@android:color/white"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:layout_marginTop="8dp"
                 android:alpha="0.8"/>

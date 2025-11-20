@@ -56,7 +56,7 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:background="@drawable/gradient_blue">
+                    android:background="#9ED8FF">
 
                     <ImageView
                         android:layout_width="48dp"
@@ -68,7 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Đặt lịch khám"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#000000"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginTop="8dp"
@@ -95,7 +95,7 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:background="@drawable/gradient_red">
+                    android:background="#FF9696">
 
                     <ImageView
                         android:layout_width="48dp"
@@ -107,7 +107,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Lịch hẹn của tôi"
-                        android:textColor="#FFFFFF"
+                        android:textColor="#000000"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         android:layout_marginTop="8dp"

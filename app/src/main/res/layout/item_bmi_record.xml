@@ -28,7 +28,7 @@
                 android:text="22.5"
                 android:textSize="32sp"
                 android:textStyle="bold"
-                android:textColor="#E74C3C"/>
+                android:textColor="#16336D"/>
 
             <TextView
                 android:id="@+id/tv_category"

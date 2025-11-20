@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Tạo tài khoản mới"
-            android:textColor="#00695C"
+            android:textColor="#16336D"
             android:textSize="30sp"
             android:fontFamily="sans-serif-medium"
             android:textStyle="bold" />
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
-                android:background="#00897B"
+                android:background="#16336D"
                 android:layout_marginEnd="4dp"/>
 
             <View
@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:text="Bước 1/2: Thông tin cơ bản"
-            android:textColor="#00897B"
+            android:textColor="#16336D"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -92,10 +92,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#00897B"
-            app:hintTextColor="#00897B"
+            app:boxStrokeColor="#16336D"
+            app:hintTextColor="#16336D"
             app:startIconDrawable="@android:drawable/ic_menu_myplaces"
-            app:startIconTint="#00897B">
+            app:startIconTint="#16336D">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_Name"
@@ -118,12 +118,12 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#00897B"
-            app:hintTextColor="#00897B"
+            app:boxStrokeColor="#16336D"
+            app:hintTextColor="#16336D"
             app:startIconDrawable="@android:drawable/stat_sys_phone_call"
-            app:startIconTint="#00897B"
+            app:startIconTint="#16336D"
             app:prefixText="+84 "
-            app:prefixTextColor="#00897B">
+            app:prefixTextColor="#16336D">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_Phone"
@@ -147,10 +147,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#00897B"
-            app:hintTextColor="#00897B"
+            app:boxStrokeColor="#16336D"
+            app:hintTextColor="#16336D"
             app:startIconDrawable="@android:drawable/ic_dialog_email"
-            app:startIconTint="#00897B"
+            app:startIconTint="#16336D"
             app:helperText="Ví dụ: email@example.com"
             app:helperTextTextColor="#757575">
 
@@ -172,7 +172,7 @@
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="#E8F5E9">
+            app:cardBackgroundColor="#E3F2FD">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,8 +185,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@android:drawable/ic_dialog_info"
-                    android:tint="#00897B"
-                    android:layout_marginEnd="12dp" />
+                    android:layout_marginEnd="12dp"
+                    app:tint="#16336D" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -210,7 +210,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:cornerRadius="30dp"
-            app:backgroundTint="#00897B"
+            app:backgroundTint="#16336D"
             app:elevation="4dp"
             app:icon="@android:drawable/ic_media_play"
             app:iconGravity="textEnd"
@@ -235,7 +235,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Đăng nhập"
-                android:textColor="#00897B"
+                android:textColor="#16336D"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:padding="4dp" />
