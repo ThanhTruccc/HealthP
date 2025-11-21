@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,8 +25,7 @@ public class MedicalRecordsActivity extends AppCompatActivity {
     private SearchView searchView;
     private RecyclerView rvMedicalRecords;
     private LinearLayout emptyState;
-    private CardView btnBack;
-
+    private ImageView btnBack;
     private SQLiteDatabase db;
     private int doctorUserId;
     private List<HealthRecord> recordList;
@@ -86,9 +86,9 @@ public class MedicalRecordsActivity extends AppCompatActivity {
 
         // Query lấy tất cả medical_records của bác sĩ này
         Cursor cursor = db.rawQuery(
-                "SELECT mr.*, u.full_name as patient_full_name " +
+                "SELECT mr.*, u.fullName as patient_full_name " +
                         "FROM medical_records mr " +
-                        "JOIN users u ON mr.patient_email = u.email " +
+                        "JOIN user u ON mr.patient_email = u.email " +
                         "WHERE mr.doctor_user_id = ? " +
                         "ORDER BY mr.visit_date DESC, mr.created_at DESC",
                 new String[]{String.valueOf(doctorUserId)}

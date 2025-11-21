@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:orientation="vertical">
 
     <!-- Header -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/background_light_peach"
+        android:background="#FFFFFF"
         android:elevation="4dp">
 
         <ImageButton
@@ -28,114 +28,85 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="Lịch sử BMI"
+            android:textColor="#333333"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#333333"/>
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btn_delete_all"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:layout_marginEnd="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
             app:tint="#E74C3C" />
     </RelativeLayout>
 
-    <!-- Chart Summary Card -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+
+    <TextView
+        android:id="@+id/tv_record_count"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp">
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="15dp"
+        android:text="5 lần đo"
+        android:textColor="#999999"
+        android:textSize="12sp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Biểu đồ BMI"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#333333"/>
-
-            <TextView
-                android:id="@+id/tv_record_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="5 lần đo"
-                android:textSize="12sp"
-                android:textColor="#999999"
-                android:layout_marginTop="4dp"/>
-
-            <!-- Simple Chart View (placeholder) -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginTop="16dp"
-                android:background="#F5F5F5"/>
-
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
     <!-- History List -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lịch sử đo"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="8dp"
+        android:text="Lịch sử đo"
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_bmi_history"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:padding="8dp" />
 
     <!-- Empty State -->
     <LinearLayout
         android:id="@+id/layout_empty"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_gravity="center"
-        android:orientation="vertical"
+        android:layout_weight="1"
         android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src="@drawable/ic_empty_bmi"
-            android:alpha="0.5"/>
+            android:alpha="0.5"
+            android:src="@drawable/ic_empty_bmi" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Chưa có lịch sử đo BMI"
-            android:textSize="16sp"
             android:textColor="#999999"
-            android:layout_marginTop="16dp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Hãy tính BMI của bạn ngay"
-            android:textSize="14sp"
             android:textColor="#BBBBBB"
-            android:layout_marginTop="8dp"/>
+            android:textSize="14sp" />
     </LinearLayout>
 
 </LinearLayout>

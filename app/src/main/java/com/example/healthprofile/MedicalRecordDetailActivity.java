@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ public class MedicalRecordDetailActivity extends AppCompatActivity {
     private TextView tvTreatmentPlan, tvNotes;
     private RecyclerView rvPrescriptions;
     private LinearLayout layoutVitalSigns, layoutTreatment, layoutNotes, layoutSymptoms;
-    private CardView btnBack;
+    private ImageView btnBack;
 
     private SQLiteDatabase db;
     private int recordId;
@@ -84,9 +85,9 @@ public class MedicalRecordDetailActivity extends AppCompatActivity {
 
     private void loadRecordDetails() {
         Cursor cursor = db.rawQuery(
-                "SELECT mr.*, u.full_name as patient_full_name " +
+                "SELECT mr.*, u.fullName as patient_full_name " +
                         "FROM medical_records mr " +
-                        "LEFT JOIN users u ON mr.patient_email = u.email " +
+                        "LEFT JOIN user u ON mr.patient_email = u.email " +
                         "WHERE mr.id = ?",
                 new String[]{String.valueOf(recordId)}
         );

@@ -17,10 +17,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-/**
- * Activity hiển thị danh sách lịch hẹn của người dùng
- * Có 3 tab: Sắp tới, Đã hoàn thành, Đã hủy
- */
 public class MyAppointmentsActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;

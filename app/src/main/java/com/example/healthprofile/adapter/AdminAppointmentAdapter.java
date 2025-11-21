@@ -76,16 +76,16 @@ public class AdminAppointmentAdapter extends RecyclerView.Adapter<AdminAppointme
     private void setStatusColor(TextView tvStatus, String status) {
         switch (status) {
             case "pending":
-                tvStatus.setTextColor(Color.parseColor("#FF9800")); // Orange
+                tvStatus.setTextColor(Color.parseColor("#FF9800"));
                 break;
             case "confirmed":
-                tvStatus.setTextColor(Color.parseColor("#2196F3")); // Blue
+                tvStatus.setTextColor(Color.parseColor("#2196F3"));
                 break;
             case "completed":
-                tvStatus.setTextColor(Color.parseColor("#4CAF50")); // Green
+                tvStatus.setTextColor(Color.parseColor("#4CAF50"));
                 break;
             case "cancelled":
-                tvStatus.setTextColor(Color.parseColor("#F44336")); // Red
+                tvStatus.setTextColor(Color.parseColor("#F44336"));
                 break;
         }
     }

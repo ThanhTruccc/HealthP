@@ -1,5 +1,7 @@
 package com.example.healthprofile;
 
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,10 +10,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.healthprofile.model.BMIRecord;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -30,14 +34,38 @@ public class BMICalculatorActivity extends AppCompatActivity {
     private boolean isUpdatingHeight = false;
     private boolean isUpdatingWeight = false;
 
+    private SQLiteDatabase db;
+    private String userEmail;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bmi_calculator);
 
+        // Lấy email từ SharedPreferences
+        userEmail = getSharedPreferences("HealthProfile", MODE_PRIVATE)
+                .getString("userEmail", "");
+
+        initDatabase();
         initViews();
         setupSliders();
         setupClickListeners();
+    }
+
+    private void initDatabase() {
+        db = openOrCreateDatabase("health_profile.db", MODE_PRIVATE, null);
+
+        // Tạo bảng bmi_records nếu chưa có
+        db.execSQL("CREATE TABLE IF NOT EXISTS bmi_records (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "user_email TEXT NOT NULL, " +
+                "gender TEXT, " +
+                "age INTEGER, " +
+                "height REAL NOT NULL, " +
+                "weight REAL NOT NULL, " +
+                "bmi REAL NOT NULL, " +
+                "category TEXT NOT NULL, " +
+                "timestamp INTEGER NOT NULL)");
     }
 
     private void initViews() {
@@ -101,12 +129,11 @@ public class BMICalculatorActivity extends AppCompatActivity {
             public void onValueChange(Slider slider, float value, boolean fromUser) {
                 if (!isUpdatingWeight) {
                     isUpdatingWeight = true;
-                    etWeight.setText(String.format(Locale.US, "%.1f", value)); // luôn dấu .
+                    etWeight.setText(String.format(Locale.US, "%.1f", value));
                     isUpdatingWeight = false;
                 }
             }
         });
-
 
         // Weight text input
         etWeight.addTextChangedListener(new TextWatcher() {
@@ -152,7 +179,8 @@ public class BMICalculatorActivity extends AppCompatActivity {
         btnViewHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: Open BMI history screen
+                Intent intent = new Intent(BMICalculatorActivity.this, BMIHistoryActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -208,11 +236,40 @@ public class BMICalculatorActivity extends AppCompatActivity {
             float heightInMeters = height / 100;
             float bmi = weight / (heightInMeters * heightInMeters);
 
+            // Get gender
+            String gender = rgGender.getCheckedRadioButtonId() == R.id.rb_male ? "Nam" : "Nữ";
+
+            // Save to database
+            saveBMIRecord(gender, age, height, weight, bmi);
+
             // Display result
             displayResult(bmi);
 
         } catch (NumberFormatException e) {
-            // Handle error
+            Toast.makeText(this, "Vui lòng nhập đúng định dạng", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveBMIRecord(String gender, int age, float height, float weight, float bmi) {
+        BMIRecord record = new BMIRecord(gender, age, height, weight);
+
+        try {
+            db.execSQL("INSERT INTO bmi_records (user_email, gender, age, height, weight, bmi, category, timestamp) " +
+                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    new Object[]{
+                            userEmail,
+                            gender,
+                            age,
+                            height,
+                            weight,
+                            bmi,
+                            record.getCategory(),
+                            System.currentTimeMillis()
+                    });
+
+            Toast.makeText(this, "Đã lưu kết quả BMI", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(this, "Lỗi khi lưu dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -298,13 +355,20 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return color;
         }
 
-
         public String getDescription() {
             return description;
         }
 
         public String getAdvice() {
             return advice;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (db != null && db.isOpen()) {
+            db.close();
         }
     }
 }

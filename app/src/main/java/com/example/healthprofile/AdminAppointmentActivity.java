@@ -44,39 +44,46 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
         setContentView(R.layout.activity_admin_appointment);
 
         openDatabase();
-
         initViews();
         setupTabLayout();
         setupRecyclerView();
+
         loadAppointments("all");
     }
+
+
+
     private void openDatabase() {
         try {
             database = openOrCreateDatabase(DATABASE_NAME, MODE_PRIVATE, null);
-            createAppointmentsTable(database); // Đảm bảo bảng tồn tại
+            createAppointmentsTable(database);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(this, "Không thể mở database", Toast.LENGTH_LONG).show();
             finish();
         }
     }
+
     private void createAppointmentsTable(SQLiteDatabase db) {
         String createAppointmentsTable =
                 "CREATE TABLE IF NOT EXISTS " + TABLE_APPOINTMENTS + " (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         "user_email TEXT, " +
+                        "doctor_id INTEGER NOT NULL, " +
                         "doctor_name TEXT NOT NULL, " +
                         "patient_name TEXT NOT NULL, " +
                         "phone TEXT NOT NULL, " +
-                        "date TEXT NOT NULL, " +
-                        "time TEXT NOT NULL, " +
+                        "appointment_date TEXT NOT NULL, " +
+                        "appointment_time TEXT NOT NULL, " +
                         "reason TEXT, " +
                         "status TEXT DEFAULT 'pending', " +
+                        "notes TEXT, " +
                         "timestamp INTEGER, " +
                         "fee INTEGER DEFAULT 200000" +
                         ")";
         db.execSQL(createAppointmentsTable);
     }
+
     private void initViews() {
         tabLayout = findViewById(R.id.tab_layout_admin);
         recyclerView = findViewById(R.id.rv_admin_appointments);
@@ -136,6 +143,7 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
         currentFilter = filter;
         new LoadAppointmentsTask(filter).execute();
     }
+
     @Override
     public void onConfirmAppointment(Appointment appointment, int position) {
         new UpdateStatusTask(appointment.getId(), "confirmed", position).execute();
@@ -161,9 +169,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
         showDetailDialog(appointment);
     }
 
-    /**
-     * Hiển thị dialog xác nhận hủy
-     */
     private void showCancelConfirmDialog(Appointment appointment, int position) {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận hủy lịch")
@@ -175,9 +180,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
                 .show();
     }
 
-    /**
-     * Hiển thị dialog xác nhận xóa
-     */
     private void showDeleteConfirmDialog(Appointment appointment, int position) {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận xóa")
@@ -189,19 +191,17 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
                 .show();
     }
 
-    /**
-     * Hiển thị chi tiết appointment
-     */
     private void showDetailDialog(Appointment appointment) {
         String details = "THÔNG TIN CHI TIẾT\n\n" +
                 "ID: #" + appointment.getId() + "\n" +
                 "Bệnh nhân: " + appointment.getPatientName() + "\n" +
                 "Số điện thoại: " + appointment.getPhone() + "\n" +
                 "Bác sĩ: " + appointment.getDoctorName() + "\n" +
-                "Ngày khám: " + appointment.getDate() + "\n" +
-                "Giờ khám: " + appointment.getTime() + "\n" +
+                "Ngày khám: " + appointment.getAppointmentDate() + "\n" +
+                "Giờ khám: " + appointment.getAppointmentTime() + "\n" +
                 "Lý do: " + appointment.getReason() + "\n" +
-                "Trạng thái: " + getVietnameseStatus(appointment.getStatus());
+                "Trạng thái: " + getVietnameseStatus(appointment.getStatus()) + "\n" +
+                "Phí: " + appointment.getFeeFormatted();
 
         new AlertDialog.Builder(this)
                 .setTitle("Chi tiết lịch hẹn")
@@ -225,43 +225,61 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
         }
     }
 
-    /**
-     * Helper method: Escape string để tránh SQL injection
-     */
     private String escapeString(String str) {
         if (str == null) return "";
         return str.replace("'", "''");
     }
 
-    /**
-     * Giả định class Appointment có các setter tương ứng
-     */
     private Appointment cursorToAppointment(Cursor cursor) {
         Appointment apt = new Appointment();
-        apt.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
 
-        int userEmailIndex = cursor.getColumnIndex("user_email");
-        if (userEmailIndex >= 0) {
-            apt.setPatientEmail(cursor.getString(userEmailIndex));
+        try {
+            apt.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+
+            // Kiểm tra và lấy user_email
+            int userEmailIndex = cursor.getColumnIndex("user_email");
+            if (userEmailIndex >= 0) {
+                apt.setPatientEmail(cursor.getString(userEmailIndex));
+            }
+
+            // Kiểm tra tên cột trong database - có thể là "date" hoặc "appointment_date"
+            int dateIndex = cursor.getColumnIndex("appointment_date");
+            if (dateIndex == -1) {
+                dateIndex = cursor.getColumnIndex("date");
+            }
+
+            int timeIndex = cursor.getColumnIndex("appointment_time");
+            if (timeIndex == -1) {
+                timeIndex = cursor.getColumnIndex("time");
+            }
+
+            apt.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));
+            apt.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("patient_name")));
+            apt.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
+
+            if (dateIndex >= 0) {
+                apt.setAppointmentDate(cursor.getString(dateIndex));
+            }
+            if (timeIndex >= 0) {
+                apt.setAppointmentTime(cursor.getString(timeIndex));
+            }
+
+            apt.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
+            apt.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+            apt.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+            apt.setFee(cursor.getInt(cursor.getColumnIndexOrThrow("fee")));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi đọc dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
-        apt.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));
-        apt.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("patient_name")));
-        apt.setPhone(cursor.getString(cursor.getColumnIndexOrThrow("phone")));
-        apt.setDate(cursor.getString(cursor.getColumnIndexOrThrow("date")));
-        apt.setTime(cursor.getString(cursor.getColumnIndexOrThrow("time")));
-        apt.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
-        apt.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
-        apt.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
-        apt.setFee(cursor.getInt(cursor.getColumnIndexOrThrow("fee")));
 
         return apt;
     }
-    /**
-     * AsyncTask để load tất cả appointments
-     */
+
     private class LoadAppointmentsTask extends AsyncTask<Void, Void, List<Appointment>> {
         private String filter;
+        private String errorMessage = null;
 
         LoadAppointmentsTask(String filter) {
             this.filter = filter;
@@ -284,14 +302,29 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
             }
 
             try {
+                // Kiểm tra tên cột trong database
+                cursor = database.rawQuery("PRAGMA table_info(" + TABLE_APPOINTMENTS + ")", null);
+                StringBuilder columns = new StringBuilder("Columns: ");
+                if (cursor.moveToFirst()) {
+                    do {
+                        String columnName = cursor.getString(cursor.getColumnIndex("name"));
+                        columns.append(columnName).append(", ");
+                    } while (cursor.moveToNext());
+                }
+                cursor.close();
+
+                // Log columns để debug
+                final String colList = columns.toString();
+                runOnUiThread(() -> {
+                    Toast.makeText(AdminAppointmentActivity.this, colList, Toast.LENGTH_LONG).show();
+                });
+
                 if (filter.equals("all")) {
-                    // Lấy tất cả appointments
                     sql = "SELECT * FROM " + TABLE_APPOINTMENTS + " ORDER BY id DESC";
                 } else {
-                    // Lấy appointments theo status
                     sql = "SELECT * FROM " + TABLE_APPOINTMENTS +
                             " WHERE status = '" + escapeString(filter) + "' " +
-                            "ORDER BY date DESC, time DESC";
+                            "ORDER BY id DESC";
                 }
 
                 cursor = database.rawQuery(sql, null);
@@ -304,6 +337,7 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
 
             } catch (Exception e) {
                 e.printStackTrace();
+                errorMessage = "Lỗi: " + e.getMessage();
             } finally {
                 if (cursor != null) {
                     cursor.close();
@@ -317,14 +351,16 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
             super.onPostExecute(result);
             progressBar.setVisibility(View.GONE);
 
+            if (errorMessage != null) {
+                Toast.makeText(AdminAppointmentActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+            }
+
             appointments.clear();
             appointments.addAll(result);
             adapter.notifyDataSetChanged();
 
-            // Update total count
             tvTotalAppointments.setText("Tổng: " + appointments.size() + " lịch hẹn");
 
-            // Show/hide empty state
             if (appointments.isEmpty()) {
                 tvEmpty.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
@@ -335,9 +371,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
         }
     }
 
-    /**
-     * AsyncTask để cập nhật status appointment TRỰC TIẾP
-     */
     private class UpdateStatusTask extends AsyncTask<Void, Void, Boolean> {
         private int appointmentId;
         private String newStatus;
@@ -355,7 +388,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
                 openDatabase();
             }
             try {
-                // Câu lệnh SQL UPDATE TRỰC TIẾP
                 String sql = "UPDATE " + TABLE_APPOINTMENTS +
                         " SET status = '" + escapeString(newStatus) + "' " +
                         "WHERE id = " + appointmentId;
@@ -373,19 +405,13 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
 
             if (success) {
                 Toast.makeText(AdminAppointmentActivity.this, "Đã cập nhật trạng thái", Toast.LENGTH_SHORT).show();
-
-                // Reload data to reflect change
                 loadAppointments(currentFilter);
-
             } else {
                 Toast.makeText(AdminAppointmentActivity.this, "Lỗi khi cập nhật", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    /**
-     * AsyncTask để xóa appointment TRỰC TIẾP
-     */
     private class DeleteAppointmentTask extends AsyncTask<Void, Void, Boolean> {
         private int appointmentId;
         private int position;
@@ -401,7 +427,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
                 openDatabase();
             }
             try {
-                // Câu lệnh SQL DELETE TRỰC TIẾP
                 String sql = "DELETE FROM " + TABLE_APPOINTMENTS + " WHERE id = " + appointmentId;
                 database.execSQL(sql);
                 return true;
@@ -417,8 +442,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
 
             if (success) {
                 Toast.makeText(AdminAppointmentActivity.this, "Đã xóa lịch hẹn", Toast.LENGTH_SHORT).show();
-
-                // Reload data
                 loadAppointments(currentFilter);
             } else {
                 Toast.makeText(AdminAppointmentActivity.this, "Lỗi khi xóa", Toast.LENGTH_SHORT).show();
@@ -429,7 +452,6 @@ public class AdminAppointmentActivity extends AppCompatActivity implements Admin
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Đóng database
         if (database != null && database.isOpen()) {
             database.close();
         }

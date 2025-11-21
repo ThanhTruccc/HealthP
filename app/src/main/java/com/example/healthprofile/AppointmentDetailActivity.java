@@ -60,7 +60,7 @@ public class AppointmentDetailActivity extends AppCompatActivity {
         tvReason = findViewById(R.id.tv_reason);
         tvFee = findViewById(R.id.tv_fee);
         tvStatus = findViewById(R.id.tv_status);
-        tvNotes = findViewById(R.id.tv_notes);
+        //tvNotes = findViewById(R.id.tv_notes);
         cardStatus = findViewById(R.id.card_status);
         layoutActions = findViewById(R.id.layout_actions);
         btnConfirm = findViewById(R.id.btn_confirm);
@@ -112,12 +112,12 @@ public class AppointmentDetailActivity extends AppCompatActivity {
         tvStatus.setText(appointment.getStatusText());
         cardStatus.setCardBackgroundColor(appointment.getStatusColor());
 
-        if (appointment.getNotes() != null && !appointment.getNotes().isEmpty()) {
-            tvNotes.setText(appointment.getNotes());
-            tvNotes.setVisibility(View.VISIBLE);
-        } else {
-            tvNotes.setVisibility(View.GONE);
-        }
+//        if (appointment.getNotes() != null && !appointment.getNotes().isEmpty()) {
+//            tvNotes.setText(appointment.getNotes());
+//            tvNotes.setVisibility(View.VISIBLE);
+//        } else {
+//            tvNotes.setVisibility(View.GONE);
+//        }
 
         updateActionButtons();
     }

@@ -177,6 +177,7 @@ public class MainActivity extends Activity {
                 "is_active INTEGER DEFAULT 1, " +
                 "created_at INTEGER, " +
                 "updated_at INTEGER)");
+
         db.execSQL("CREATE TABLE IF NOT EXISTS user_doctors (" +
                 "user_id INTEGER PRIMARY KEY, " +
                 "doctor_id INTEGER NOT NULL, " +

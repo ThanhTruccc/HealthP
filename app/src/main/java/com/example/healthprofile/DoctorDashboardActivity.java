@@ -31,8 +31,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private TextView tvTodayCount, tvPendingCount, tvCompletedCount;
     private RecyclerView rvAppointments;
     private LinearLayout emptyState;
-    private Button btnLogout;
-
+    private Button btnLogout, btnRecords;
     private SQLiteDatabase db;
     private SharedPreferences prefs;
     private int doctorId;
@@ -59,14 +58,47 @@ public class DoctorDashboardActivity extends AppCompatActivity {
 
         db = openOrCreateDatabase("health_profile.db", MODE_PRIVATE, null);
 
+        // DEBUG: Log để kiểm tra
+        android.util.Log.d("DoctorDashboard", "User ID: " + userId);
+        android.util.Log.d("DoctorDashboard", "Doctor Name: " + doctorName);
         // Lấy doctor_id từ bảng liên kết
         Cursor cursor = db.rawQuery("SELECT doctor_id FROM user_doctors WHERE user_id = " + userId, null);
         if (cursor.moveToFirst()) {
             doctorId = cursor.getInt(0);
+            android.util.Log.d("DoctorDashboard", "Found doctor_id from user_doctors: " + doctorId);
         } else {
-            doctorId = userId;
+            // Nếu không tìm thấy trong user_doctors, thử tìm trong bảng doctors theo tên
+            android.util.Log.d("DoctorDashboard", "Not found in user_doctors, trying doctors table");
+            cursor.close();
+
+            cursor = db.rawQuery("SELECT id FROM doctors WHERE name LIKE ?",
+                    new String[]{"%" + doctorName.replace("BS. ", "") + "%"});
+
+            if (cursor.moveToFirst()) {
+                doctorId = cursor.getInt(0);
+                android.util.Log.d("DoctorDashboard", "Found doctor_id from doctors table: " + doctorId);
+            } else {
+                doctorId = userId; // Fallback
+                android.util.Log.d("DoctorDashboard", "Using userId as fallback: " + doctorId);
+            }
         }
         cursor.close();
+
+        // DEBUG: Kiểm tra appointments trong database
+        Cursor allAppts = db.rawQuery("SELECT id, doctor_id, doctor_name, patient_name, status FROM appointments", null);
+        android.util.Log.d("DoctorDashboard", "Total appointments in DB: " + allAppts.getCount());
+        if (allAppts.moveToFirst()) {
+            do {
+                android.util.Log.d("DoctorDashboard", "Appointment - ID: " + allAppts.getInt(0)
+                        + ", doctor_id: " + allAppts.getInt(1)
+                        + ", doctor_name: " + allAppts.getString(2)
+                        + ", patient: " + allAppts.getString(3)
+                        + ", status: " + allAppts.getString(4));
+            } while (allAppts.moveToNext());
+        }
+        allAppts.close();
+
+        android.util.Log.d("DoctorDashboard", "Final doctorId used for query: " + doctorId);
 
         initViews();
         loadStatistics();
@@ -81,6 +113,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         tvCompletedCount = findViewById(R.id.tv_completed_count);
         rvAppointments = findViewById(R.id.rv_appointments);
         emptyState = findViewById(R.id.empty_state_appointments);
+        btnRecords = findViewById(R.id.btn_view_medical_records);
         btnLogout = findViewById(R.id.btn_logout);
 
         tvDoctorName.setText(prefs.getString("fullName", ""));
@@ -92,6 +125,11 @@ public class DoctorDashboardActivity extends AppCompatActivity {
             tvSpecialization.setText(cursor.getString(0));
         }
         cursor.close();
+
+        btnRecords.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MedicalRecordsActivity.class);
+            startActivity(intent);
+        });
 
         // Xử lý nút đăng xuất - hiển thị dialog xác nhận
         btnLogout.setOnClickListener(v -> showLogoutDialog());
@@ -146,8 +184,10 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private void loadAppointments() {
         appointmentList.clear();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM appointments WHERE doctor_id = " + doctorId +
-                " ORDER BY appointment_date DESC, appointment_time DESC", null);
+        String query = "SELECT * FROM appointments WHERE doctor_id = ? ORDER BY appointment_date DESC, appointment_time DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(doctorId)});
+
+        android.util.Log.d("DoctorDashboard", "Query result count: " + cursor.getCount());
 
         if (cursor.moveToFirst()) {
             do {
@@ -162,9 +202,10 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 appointment.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
                 appointment.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
 
-                int notesIndex = cursor.getColumnIndexOrThrow("notes");
-                String notes = cursor.isNull(notesIndex) ? "" : cursor.getString(notesIndex);
-                appointment.setNotes(notes);
+                int notesIndex = cursor.getColumnIndex("notes");
+                if (notesIndex != -1 && !cursor.isNull(notesIndex)) {
+                    appointment.setNotes(cursor.getString(notesIndex));
+                }
 
                 int phoneIndex = cursor.getColumnIndex("phone");
                 if (phoneIndex != -1 && !cursor.isNull(phoneIndex)) {
@@ -182,6 +223,7 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         cursor.close();
 
         adapter.notifyDataSetChanged();
+
 
         if (appointmentList.isEmpty()) {
             emptyState.setVisibility(View.VISIBLE);

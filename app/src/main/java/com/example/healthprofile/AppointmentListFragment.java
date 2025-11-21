@@ -38,7 +38,6 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
     private LinearLayout tvEmpty;
     private ProgressBar progressBar;
     private String filterStatus;
-
     private SQLiteDatabase db;
     private String userEmail;
 
@@ -335,7 +334,7 @@ public class AppointmentListFragment extends Fragment implements AppointmentAdap
     @Override
     public void onViewDetail(Appointment appointment) {
         if (getContext() != null) {
-            Intent intent = new Intent(getContext(), AppointmentDetailActivity.class);
+            Intent intent = new Intent(getContext(), AppointmentUserDetailActivity.class);
             intent.putExtra("appointment_id", appointment.getId());
             startActivity(intent);
         }

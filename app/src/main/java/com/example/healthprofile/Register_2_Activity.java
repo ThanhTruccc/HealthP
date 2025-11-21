@@ -84,5 +84,6 @@ public class Register_2_Activity extends AppCompatActivity {
                 Toast.makeText(this, "Lỗi khi lưu tài khoản!", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }

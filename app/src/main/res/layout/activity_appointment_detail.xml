@@ -265,40 +265,6 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Notes (if available) -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="Ghi chú từ bác sĩ"
-                    android:textColor="#333333"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_notes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Chưa có ghi chú"
-                    android:textColor="#666666"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
         <!-- Action Buttons -->
         <LinearLayout
             android:id="@+id/layout_actions"

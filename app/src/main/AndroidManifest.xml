@@ -76,6 +76,7 @@
         <activity android:name=".ChallengeDetailActivity" android:exported="false" />
         <activity android:name=".BookAppointmentActivity" android:exported="false" />
         <activity android:name=".BMICalculatorActivity" android:exported="false" />
+        <activity android:name=".BMIHistoryActivity" android:exported="false"/>
         <activity android:name=".MyAppointmentsActivity" android:exported="false" />
         <activity android:name=".HealthProfileActivity" android:exported="false" />
         <activity android:name=".EditProfileActivity" android:exported="false" />
@@ -93,8 +94,11 @@
         <activity android:name=".StepTrackerActivity" android:exported="false" android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".DoctorDashboardActivity" android:exported="false" />
         <activity android:name=".AppointmentDetailActivity" android:exported="false" />
+        <activity android:name=".AppointmentUserDetailActivity" android:exported="false" />
         <activity android:name=".CreateMedicalRecordActivity" android:exported="false" />
         <activity android:name=".UnifiedStepActivity" android:exported="false" />
+        <activity android:name=".MedicalRecordsActivity" android:exported="false"/>
+        <activity android:name=".MedicalRecordDetailActivity" android:exported="false"/>
         <activity android:name=".HealthTipsActivity" android:exported="false"/>
         <activity android:name=".HealthTipDetailActivity" android:exported="false"/>
     </application>
