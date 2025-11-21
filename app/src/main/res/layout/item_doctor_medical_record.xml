@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Patient Name & Date -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <!-- Patient Icon -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#E3F2FD"
+                android:layout_marginEnd="12dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_person"
+                    app:tint="#2196F3" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Patient Name -->
+            <TextView
+                android:id="@+id/tv_patient_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Nguyễn Văn A"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"/>
+
+            <!-- Visit Date -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_calendar"
+                    android:layout_marginEnd="4dp"
+                    app:tint="#666666" />
+
+                <TextView
+                    android:id="@+id/tv_visit_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="15/11/2025"
+                    android:textSize="12sp"
+                    android:textColor="#666666"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="8dp"/>
+
+        <!-- Diagnosis Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chẩn đoán"
+                    android:textSize="11sp"
+                    android:textColor="#999999"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="2dp"/>
+
+                <TextView
+                    android:id="@+id/tv_diagnosis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Viêm họng cấp"
+                    android:textSize="14sp"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold"
+                    android:maxLines="2"
+                    android:ellipsize="end"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Chief Complaint -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lý do khám"
+                android:textSize="11sp"
+                android:textColor="#999999"
+                android:textStyle="bold"
+                android:layout_marginBottom="2dp"/>
+
+            <TextView
+                android:id="@+id/tv_complaint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đau họng, khó nuốt, sốt nhẹ"
+                android:textSize="13sp"
+                android:textColor="#666666"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:lineSpacingExtra="2dp"/>
+        </LinearLayout>
+
+        <!-- View Detail Indicator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end|center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xem chi tiết"
+                android:textSize="12sp"
+                android:textColor="#2196F3"
+                android:textStyle="bold"
+                android:layout_marginEnd="4dp"/>
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_more"
+                android:rotation="270"
+                app:tint="#2196F3" />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

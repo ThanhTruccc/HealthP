@@ -44,8 +44,7 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
         implements AdminDoctorAdapter.OnDoctorActionListener {
 
     private static final String TAG = "AdminDoctorMgmt";
-    private static final int PICK_IMAGE_REQUEST_ADD = 1001;
-    private static final int PICK_IMAGE_REQUEST_EDIT = 1002;
+    private static final int PICK_IMAGE_REQUEST = 1001;
 
     private RecyclerView recyclerView;
     private AdminDoctorAdapter adapter;
@@ -63,8 +62,7 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
 
     private ImageView imgPreviewDoctor;
     private String selectedImagePath = null;
-    private AlertDialog currentDialog;
-    private boolean isEditMode = false;
+    private Doctor editingDoctor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,7 +221,7 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
                             doctor.setExperience(experienceIndex >= 0 ? cursor.getInt(experienceIndex) : 0);
 
                             int imageResourceIndex = cursor.getColumnIndex("image_resource");
-                            doctor.setImageResource(imageResourceIndex >= 0 ? cursor.getInt(imageResourceIndex) : R.drawable.doctor_1);
+                            doctor.setImageResource(imageResourceIndex >= 0 ? cursor.getInt(imageResourceIndex) : null);
 
                             int imagePathIndex = cursor.getColumnIndex("image_path");
                             if (imagePathIndex >= 0 && !cursor.isNull(imagePathIndex)) {
@@ -280,12 +278,14 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
 
     @Override
     public void onEditDoctor(Doctor doctor, int position) {
-        showEditDoctorDialog(doctor, position);
+        editingDoctor = doctor;
+        selectedImagePath = doctor.getImagePath();
+        showAddEditDialog(doctor);
     }
 
     @Override
     public void onDeleteDoctor(Doctor doctor, int position) {
-        showDeleteConfirmDialog(doctor, position);
+        showDeleteConfirmDialog(doctor);
     }
 
     @Override
@@ -294,10 +294,13 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
     }
 
     private void showAddDoctorDialog() {
-        isEditMode = false;
+        editingDoctor = null;
         selectedImagePath = null;
+        showAddEditDialog(null);
+    }
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_doctor_with_image, null);
+    private void showAddEditDialog(Doctor doctor) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit_doctor, null);
 
         EditText edtName = dialogView.findViewById(R.id.edt_doctor_name);
         Spinner spinnerDegree = dialogView.findViewById(R.id.spinner_degree);
@@ -307,7 +310,6 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
         EditText edtRating = dialogView.findViewById(R.id.edt_rating);
         imgPreviewDoctor = dialogView.findViewById(R.id.img_preview_doctor);
         Button btnSelectImage = dialogView.findViewById(R.id.btn_select_image);
-        Button btnUseDefault = dialogView.findViewById(R.id.btn_use_default);
 
         // Setup spinners
         String[] degrees = {"BS.", "ThS.BS.", "TS.BS.", "PGS.TS.", "GS.TS."};
@@ -325,278 +327,180 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
 
         btnSelectImage.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*");
-            startActivityForResult(intent, PICK_IMAGE_REQUEST_ADD);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
         });
 
-        btnUseDefault.setOnClickListener(v -> {
-            selectedImagePath = null;
-            imgPreviewDoctor.setImageResource(R.drawable.doctor_1);
-            Toast.makeText(this, "Sẽ sử dụng ảnh mặc định", Toast.LENGTH_SHORT).show();
-        });
+        // Fill data if editing
+        if (doctor != null) {
+            edtName.setText(doctor.getName());
+            edtWorkplace.setText(doctor.getWorkplace());
+            edtExperience.setText(String.valueOf(doctor.getExperience()));
+            edtRating.setText(String.valueOf(doctor.getRating()));
 
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Thêm bác sĩ mới")
-                .setView(dialogView)
-                .setPositiveButton("Thêm", null)
-                .setNegativeButton("Hủy", null)
-                .create();
-
-        currentDialog = dialog;
-
-        dialog.setOnShowListener(dialogInterface -> {
-            Button btnAdd = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            btnAdd.setOnClickListener(v -> {
-                if (validateDoctorInput(edtName, edtWorkplace, edtExperience, edtRating)) {
-                    try {
-                        Doctor newDoctor = new Doctor();
-                        newDoctor.setName(edtName.getText().toString().trim());
-                        newDoctor.setDegree(spinnerDegree.getSelectedItem().toString());
-                        newDoctor.setSpecialty(spinnerSpecialty.getSelectedItem().toString());
-                        newDoctor.setWorkplace(edtWorkplace.getText().toString().trim());
-                        newDoctor.setExperience(Integer.parseInt(edtExperience.getText().toString().trim()));
-                        newDoctor.setRating(Float.parseFloat(edtRating.getText().toString().trim()));
-                        newDoctor.setImageResource(R.drawable.doctor_1);
-                        newDoctor.setImagePath(selectedImagePath);
-
-                        new AddDoctorTask(newDoctor, dialog).execute();
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(this, "Số năm kinh nghiệm hoặc đánh giá không hợp lệ!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+            // Set spinner positions
+            for (int i = 0; i < degrees.length; i++) {
+                if (degrees[i].equals(doctor.getDegree())) {
+                    spinnerDegree.setSelection(i);
+                    break;
                 }
-            });
-        });
+            }
 
-        dialog.show();
-    }
+            for (int i = 0; i < specialties.length; i++) {
+                if (specialties[i].equals(doctor.getSpecialty())) {
+                    spinnerSpecialty.setSelection(i);
+                    break;
+                }
+            }
 
-    private void showEditDoctorDialog(Doctor doctor, int position) {
-        isEditMode = true;
-        selectedImagePath = doctor.getImagePath();
-
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_doctor_with_image, null);
-
-        EditText edtName = dialogView.findViewById(R.id.edt_doctor_name);
-        Spinner spinnerDegree = dialogView.findViewById(R.id.spinner_degree);
-        Spinner spinnerSpecialty = dialogView.findViewById(R.id.spinner_specialty);
-        EditText edtWorkplace = dialogView.findViewById(R.id.edt_workplace);
-        EditText edtExperience = dialogView.findViewById(R.id.edt_experience);
-        EditText edtRating = dialogView.findViewById(R.id.edt_rating);
-        imgPreviewDoctor = dialogView.findViewById(R.id.img_preview_doctor);
-        Button btnSelectImage = dialogView.findViewById(R.id.btn_select_image);
-        Button btnUseDefault = dialogView.findViewById(R.id.btn_use_default);
-
-        // Điền dữ liệu hiện tại
-        edtName.setText(doctor.getName());
-        edtWorkplace.setText(doctor.getWorkplace());
-        edtExperience.setText(String.valueOf(doctor.getExperience()));
-        edtRating.setText(String.valueOf(doctor.getRating()));
-
-        // Hiển thị ảnh hiện tại
-        if (doctor.getImagePath() != null && !doctor.getImagePath().isEmpty()) {
-            File imgFile = new File(doctor.getImagePath());
-            if (imgFile.exists()) {
-                Bitmap bitmap = BitmapFactory.decodeFile(doctor.getImagePath());
-                imgPreviewDoctor.setImageBitmap(bitmap);
-            } else {
+            // Display current image
+            if (doctor.getImagePath() != null && !doctor.getImagePath().isEmpty()) {
+                File imgFile = new File(doctor.getImagePath());
+                if (imgFile.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(doctor.getImagePath());
+                    imgPreviewDoctor.setImageBitmap(bitmap);
+                }
+            } else if (doctor.getImageResource() != 0) {
                 imgPreviewDoctor.setImageResource(doctor.getImageResource());
             }
-        } else {
-            imgPreviewDoctor.setImageResource(doctor.getImageResource());
         }
-
-        // Setup spinners
-        String[] degrees = {"BS.", "ThS.BS.", "TS.BS.", "PGS.TS.", "GS.TS."};
-        ArrayAdapter<String> degreeAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, degrees);
-        degreeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDegree.setAdapter(degreeAdapter);
-
-        // Set spinner position
-        for (int i = 0; i < degrees.length; i++) {
-            if (degrees[i].equals(doctor.getDegree())) {
-                spinnerDegree.setSelection(i);
-                break;
-            }
-        }
-
-        String[] specialties = {"Nội khoa", "Ngoại khoa", "Nhi khoa", "Sản khoa",
-                "Da liễu", "Tim mạch", "Tiêu hóa", "Thần kinh", "Tai mũi họng"};
-        ArrayAdapter<String> specialtyAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, specialties);
-        specialtyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerSpecialty.setAdapter(specialtyAdapter);
-
-        // Set spinner position
-        for (int i = 0; i < specialties.length; i++) {
-            if (specialties[i].equals(doctor.getSpecialty())) {
-                spinnerSpecialty.setSelection(i);
-                break;
-            }
-        }
-
-        btnSelectImage.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/*");
-            startActivityForResult(intent, PICK_IMAGE_REQUEST_EDIT);
-        });
-
-        btnUseDefault.setOnClickListener(v -> {
-            selectedImagePath = null;
-            imgPreviewDoctor.setImageResource(R.drawable.doctor_1);
-            Toast.makeText(this, "Sẽ sử dụng ảnh mặc định", Toast.LENGTH_SHORT).show();
-        });
 
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Chỉnh sửa thông tin bác sĩ")
+                .setTitle(doctor == null ? "Thêm bác sĩ" : "Sửa bác sĩ")
                 .setView(dialogView)
-                .setPositiveButton("Cập nhật", null)
+                .setPositiveButton("Lưu", null)
                 .setNegativeButton("Hủy", null)
                 .create();
 
-        currentDialog = dialog;
-
         dialog.setOnShowListener(dialogInterface -> {
-            Button btnUpdate = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            btnUpdate.setOnClickListener(v -> {
-                if (validateDoctorInput(edtName, edtWorkplace, edtExperience, edtRating)) {
-                    try {
-                        doctor.setName(edtName.getText().toString().trim());
-                        doctor.setDegree(spinnerDegree.getSelectedItem().toString());
-                        doctor.setSpecialty(spinnerSpecialty.getSelectedItem().toString());
-                        doctor.setWorkplace(edtWorkplace.getText().toString().trim());
-                        doctor.setExperience(Integer.parseInt(edtExperience.getText().toString().trim()));
-                        doctor.setRating(Float.parseFloat(edtRating.getText().toString().trim()));
-                        doctor.setImagePath(selectedImagePath);
+            Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btnSave.setOnClickListener(v -> {
+                String name = edtName.getText().toString().trim();
+                String workplace = edtWorkplace.getText().toString().trim();
+                String experienceStr = edtExperience.getText().toString().trim();
+                String ratingStr = edtRating.getText().toString().trim();
 
-                        new UpdateDoctorTask(doctor, dialog, position).execute();
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(this, "Số năm kinh nghiệm hoặc đánh giá không hợp lệ!",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                if (name.isEmpty()) {
+                    edtName.setError("Vui lòng nhập tên");
+                    return;
                 }
+
+                if (workplace.isEmpty()) {
+                    edtWorkplace.setError("Vui lòng nhập nơi làm việc");
+                    return;
+                }
+
+                if (experienceStr.isEmpty()) {
+                    edtExperience.setError("Vui lòng nhập kinh nghiệm");
+                    return;
+                }
+
+                if (ratingStr.isEmpty()) {
+                    edtRating.setError("Vui lòng nhập đánh giá");
+                    return;
+                }
+
+                int experience = 0;
+                float rating = 0.0f;
+
+                try {
+                    experience = Integer.parseInt(experienceStr);
+                    rating = Float.parseFloat(ratingStr);
+
+                    if (rating < 0 || rating > 5) {
+                        Toast.makeText(this, "Đánh giá phải từ 0 đến 5!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    Toast.makeText(this, "Kinh nghiệm hoặc đánh giá không hợp lệ!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Doctor newDoctor = new Doctor();
+                if (doctor != null) {
+                    newDoctor.setId(doctor.getId());
+                }
+                newDoctor.setName(name);
+                newDoctor.setDegree(spinnerDegree.getSelectedItem().toString());
+                newDoctor.setSpecialty(spinnerSpecialty.getSelectedItem().toString());
+                newDoctor.setWorkplace(workplace);
+                newDoctor.setExperience(experience);
+                newDoctor.setRating(rating);
+                newDoctor.setImageResource(R.drawable.doctor_1);
+                newDoctor.setImagePath(selectedImagePath);
+
+                if (doctor == null) {
+                    new AddDoctorTask(newDoctor).execute();
+                } else {
+                    new UpdateDoctorTask(newDoctor).execute();
+                }
+
+                dialog.dismiss();
             });
         });
 
         dialog.show();
     }
 
-    private boolean validateDoctorInput(EditText edtName, EditText edtWorkplace,
-                                        EditText edtExperience, EditText edtRating) {
-        String name = edtName.getText().toString().trim();
-        String workplace = edtWorkplace.getText().toString().trim();
-        String experienceStr = edtExperience.getText().toString().trim();
-        String ratingStr = edtRating.getText().toString().trim();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        if (name.isEmpty() || workplace.isEmpty() || experienceStr.isEmpty() || ratingStr.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        try {
-            float rating = Float.parseFloat(ratingStr);
-            if (rating < 0 || rating > 5) {
-                Toast.makeText(this, "Đánh giá phải từ 0 đến 5!", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Đánh giá không hợp lệ!", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        return true;
-    }
-
-    private class AddDoctorTask extends AsyncTask<Void, Void, Long> {
-        private Doctor doctor;
-        private AlertDialog dialog;
-
-        AddDoctorTask(Doctor doctor, AlertDialog dialog) {
-            this.doctor = doctor;
-            this.dialog = dialog;
-        }
-
-        @Override
-        protected Long doInBackground(Void... voids) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             try {
-                String imagePath = doctor.getImagePath() != null ?
-                        "'" + escapeString(doctor.getImagePath()) + "'" : "NULL";
+                Uri imageUri = data.getData();
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
-                String sql = "INSERT INTO doctors (name, degree, specialty, workplace, rating, experience, image_resource, image_path) " +
-                        "VALUES ('" + escapeString(doctor.getName()) + "', " +
-                        "'" + escapeString(doctor.getDegree()) + "', " +
-                        "'" + escapeString(doctor.getSpecialty()) + "', " +
-                        "'" + escapeString(doctor.getWorkplace()) + "', " +
-                        doctor.getRating() + ", " +
-                        doctor.getExperience() + ", " +
-                        doctor.getImageResource() + ", " +
-                        imagePath + ")";
-
-                Log.d(TAG, "Insert SQL: " + sql);
-                db.execSQL(sql);
-
-                Cursor cursor = db.rawQuery("SELECT last_insert_rowid()", null);
-                long id = -1;
-                if (cursor.moveToFirst()) {
-                    id = cursor.getLong(0);
+                // Save to internal storage
+                String fileName = "doctor_" + System.currentTimeMillis() + ".jpg";
+                File directory = new File(getFilesDir(), "doctor_images");
+                if (!directory.exists()) {
+                    directory.mkdirs();
                 }
-                cursor.close();
 
-                return id;
+                File imageFile = new File(directory, fileName);
+                FileOutputStream fos = new FileOutputStream(imageFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                fos.close();
+
+                selectedImagePath = imageFile.getAbsolutePath();
+                imgPreviewDoctor.setImageBitmap(bitmap);
+
+                Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
-                Log.e(TAG, "Error inserting: " + e.getMessage());
+                Toast.makeText(this, "Lỗi khi chọn ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
-                return -1L;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Long result) {
-            if (result > 0) {
-                Toast.makeText(AdminDoctorManagementActivity.this,
-                        "Thêm bác sĩ thành công!", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-                loadDoctors();
-            } else {
-                Toast.makeText(AdminDoctorManagementActivity.this,
-                        "Lỗi khi thêm bác sĩ!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-    private class UpdateDoctorTask extends AsyncTask<Void, Void, Boolean> {
+    private class AddDoctorTask extends AsyncTask<Void, Void, Boolean> {
         private Doctor doctor;
-        private AlertDialog dialog;
-        private int position;
 
-        UpdateDoctorTask(Doctor doctor, AlertDialog dialog, int position) {
+        AddDoctorTask(Doctor doctor) {
             this.doctor = doctor;
-            this.dialog = dialog;
-            this.position = position;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                String imagePath = doctor.getImagePath() != null ?
-                        "'" + escapeString(doctor.getImagePath()) + "'" : "NULL";
+                String sql = "INSERT INTO doctors (name, degree, specialty, workplace, rating, experience, image_resource, image_path) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-                String sql = "UPDATE doctors SET " +
-                        "name = '" + escapeString(doctor.getName()) + "', " +
-                        "degree = '" + escapeString(doctor.getDegree()) + "', " +
-                        "specialty = '" + escapeString(doctor.getSpecialty()) + "', " +
-                        "workplace = '" + escapeString(doctor.getWorkplace()) + "', " +
-                        "rating = " + doctor.getRating() + ", " +
-                        "experience = " + doctor.getExperience() + ", " +
-                        "image_path = " + imagePath + " " +
-                        "WHERE id = " + doctor.getId();
+                db.execSQL(sql, new Object[]{
+                        doctor.getName(),
+                        doctor.getDegree(),
+                        doctor.getSpecialty(),
+                        doctor.getWorkplace(),
+                        doctor.getRating(),
+                        doctor.getExperience(),
+                        doctor.getImageResource(),
+                        doctor.getImagePath()
+                });
 
-                Log.d(TAG, "Update SQL: " + sql);
-                db.execSQL(sql);
                 return true;
             } catch (Exception e) {
-                Log.e(TAG, "Error updating: " + e.getMessage());
+                Log.e(TAG, "Error adding doctor: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             }
@@ -606,8 +510,53 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
         protected void onPostExecute(Boolean success) {
             if (success) {
                 Toast.makeText(AdminDoctorManagementActivity.this,
-                        "Cập nhật thông tin thành công!", Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+                        "Đã thêm bác sĩ!", Toast.LENGTH_SHORT).show();
+                loadDoctors();
+            } else {
+                Toast.makeText(AdminDoctorManagementActivity.this,
+                        "Lỗi khi thêm!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class UpdateDoctorTask extends AsyncTask<Void, Void, Boolean> {
+        private Doctor doctor;
+
+        UpdateDoctorTask(Doctor doctor) {
+            this.doctor = doctor;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                String sql = "UPDATE doctors SET name = ?, degree = ?, specialty = ?, " +
+                        "workplace = ?, rating = ?, experience = ?, image_path = ? " +
+                        "WHERE id = ?";
+
+                db.execSQL(sql, new Object[]{
+                        doctor.getName(),
+                        doctor.getDegree(),
+                        doctor.getSpecialty(),
+                        doctor.getWorkplace(),
+                        doctor.getRating(),
+                        doctor.getExperience(),
+                        doctor.getImagePath(),
+                        doctor.getId()
+                });
+
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating doctor: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                Toast.makeText(AdminDoctorManagementActivity.this,
+                        "Đã cập nhật bác sĩ!", Toast.LENGTH_SHORT).show();
                 loadDoctors();
             } else {
                 Toast.makeText(AdminDoctorManagementActivity.this,
@@ -616,13 +565,13 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
         }
     }
 
-    private void showDeleteConfirmDialog(Doctor doctor, int position) {
+    private void showDeleteConfirmDialog(Doctor doctor) {
         new AlertDialog.Builder(this)
                 .setTitle("Xác nhận xóa")
                 .setMessage("Bạn có chắc chắn muốn xóa bác sĩ:\n" +
                         doctor.getDegree() + " " + doctor.getName() + "?")
                 .setPositiveButton("Xóa", (dialog, which) -> {
-                    new DeleteDoctorTask(doctor, position).execute();
+                    new DeleteDoctorTask(doctor).execute();
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
@@ -630,11 +579,9 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
 
     private class DeleteDoctorTask extends AsyncTask<Void, Void, Boolean> {
         private Doctor doctor;
-        private int position;
 
-        DeleteDoctorTask(Doctor doctor, int position) {
+        DeleteDoctorTask(Doctor doctor) {
             this.doctor = doctor;
-            this.position = position;
         }
 
         @Override
@@ -685,87 +632,6 @@ public class AdminDoctorManagementActivity extends AppCompatActivity
                 .setMessage(details)
                 .setPositiveButton("Đóng", null)
                 .show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if ((requestCode == PICK_IMAGE_REQUEST_ADD || requestCode == PICK_IMAGE_REQUEST_EDIT)
-                && resultCode == RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-
-            if (imageUri != null) {
-                try {
-                    String savedPath = saveImageToInternalStorage(imageUri);
-
-                    if (savedPath != null) {
-                        selectedImagePath = savedPath;
-
-                        if (imgPreviewDoctor != null) {
-                            Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
-                            imgPreviewDoctor.setImageBitmap(bitmap);
-                        }
-
-                        Toast.makeText(this, "Đã chọn ảnh thành công!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(this, "Lỗi khi lưu ảnh!", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "Error selecting image: " + e.getMessage());
-                    e.printStackTrace();
-                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    private String saveImageToInternalStorage(Uri imageUri) {
-        try {
-            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            inputStream.close();
-
-            bitmap = resizeBitmap(bitmap, 800, 800);
-
-            String filename = "doctor_" + System.currentTimeMillis() + ".jpg";
-            File directory = getFilesDir();
-            File imageFile = new File(directory, filename);
-
-            FileOutputStream fos = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, fos);
-            fos.close();
-
-            return imageFile.getAbsolutePath();
-        } catch (Exception e) {
-            Log.e(TAG, "Error saving image: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private Bitmap resizeBitmap(Bitmap bitmap, int maxWidth, int maxHeight) {
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        float ratioBitmap = (float) width / (float) height;
-        float ratioMax = (float) maxWidth / (float) maxHeight;
-
-        int finalWidth = maxWidth;
-        int finalHeight = maxHeight;
-
-        if (ratioMax > ratioBitmap) {
-            finalWidth = (int) ((float) maxHeight * ratioBitmap);
-        } else {
-            finalHeight = (int) ((float) maxWidth / ratioBitmap);
-        }
-
-        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true);
-    }
-
-    private String escapeString(String str) {
-        if (str == null) return "";
-        return str.replace("'", "''");
     }
 
     @Override

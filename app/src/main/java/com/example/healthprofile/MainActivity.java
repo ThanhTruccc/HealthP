@@ -134,6 +134,7 @@ public class MainActivity extends Activity {
                 "participants INTEGER DEFAULT 0, " +
                 "reward_points INTEGER DEFAULT 50, " +
                 "image_resource INTEGER, " +
+                "image_path TEXT," +
                 "status TEXT DEFAULT 'active')");
 
         // Bảng user_challenges (Lịch sử tham gia thử thách - dùng cho HomeFragment)
@@ -246,15 +247,15 @@ public class MainActivity extends Activity {
                     "('user123', 'Phạm Thị Dung', 'phamthidung@gmail.com', '0934567890', 'user')");
 
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
-                    "('doctor123', 'BS. Phạm Thị Xuân Mai', 'bsmai@hospital.com', '0901111111', 'doctor')");
+                    "('doctor123', 'BS. Phạm Thị Xuân Mai', 'bsmai@doctor.com', '0901111111', 'doctor')");
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
-                    "('doctor123', 'BS. Nguyễn Văn Hoàng', 'bshoang@hospital.com', '0902222222', 'doctor')");
+                    "('doctor123', 'BS. Nguyễn Văn Hoàng', 'bshoang@doctor.com', '0902222222', 'doctor')");
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
-                    "('doctor123', 'BS. Lê Thị Thu Hà', 'bsthuhà@hospital.com', '0903333333', 'doctor')");
+                    "('doctor123', 'BS. Lê Thị Thu Hà', 'bsthuha@doctor.com', '0903333333', 'doctor')");
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
-                    "('doctor123', 'BS. Lê Quang Huy', 'bshuy@hospital.com', '0904444444', 'doctor')");
+                    "('doctor123', 'BS. Lê Quang Huy', 'bshuy@doctor.com', '0904444444', 'doctor')");
             db.execSQL("INSERT INTO user (password, fullName, email, phone, role) VALUES " +
-                    "('doctor123', 'BS. Phạm Thị Xuân Vy', 'bsvy@hospital.com', '0905555555', 'doctor')");
+                    "('doctor123', 'BS. Phạm Thị Xuân Vy', 'bsvy@doctor.com', '0905555555', 'doctor')");
         }
         check.close();
 
@@ -301,44 +302,46 @@ public class MainActivity extends Activity {
             // Thử thách 1: Hiến máu nhân đạo (bắt đầu hôm nay, kết thúc sau 30 ngày)
             long startDate1 = currentTime;
             long endDate1 = currentTime + (30 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    // ĐÃ SỬA: Thay thế 'image_path' cũ bằng R.drawable.challenge_blood (image_resource) và thêm 'null' cho image_path
                     new Object[]{"Hiến máu nhân đạo", "Tham gia hiến máu cứu người, mỗi đơn vị máu là một cơ hội sống cho người khác",
-                            startDate1, endDate1, 30, 245, 100, R.drawable.challenge_blood, "active"});
+                            startDate1, endDate1, 30, 245, 100, R.drawable.challenge_blood, null, "active"});
 
-            // Thử thách 2: Một giờ không rác (bắt đầu hôm nay, kết thúc sau 15 ngày)
+// Thử thách 2: Một giờ không rác (bắt đầu hôm nay, kết thúc sau 15 ngày)
             long startDate2 = currentTime;
             long endDate2 = currentTime + (15 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     new Object[]{"Một giờ không rác", "Mỗi ngày dành 1 giờ thu gom rác, bảo vệ môi trường sống xanh sạch đẹp",
-                            startDate2, endDate2, 15, 532, 50, R.drawable.challenge_clean, "active"});
+                            startDate2, endDate2, 15, 532, 50, R.drawable.challenge_clean, null, "active"});
 
-            // Thử thách 3: Chia sẻ yêu thương (bắt đầu hôm nay, kết thúc sau 21 ngày)
+// Thử thách 3: Chia sẻ yêu thương (bắt đầu hôm nay, kết thúc sau 21 ngày)
             long startDate3 = currentTime;
             long endDate3 = currentTime + (21 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     new Object[]{"Chia sẻ yêu thương", "Chia sẻ bữa ăn, quần áo, học phí cho người có hoàn cảnh khó khăn",
-                            startDate3, endDate3, 21, 189, 75, R.drawable.challenge_share, "active"});
+                            startDate3, endDate3, 21, 189, 75, R.drawable.challenge_share, null, "active"});
 
-            // Thử thách 4: 10,000 bước mỗi ngày (bắt đầu hôm nay, kết thúc sau 30 ngày)
+// Thử thách 4: 10,000 bước mỗi ngày (bắt đầu hôm nay, kết thúc sau 30 ngày)
             long startDate4 = currentTime;
             long endDate4 = currentTime + (30 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     new Object[]{"10,000 bước mỗi ngày", "Thử thách đi bộ 10,000 bước mỗi ngày để cải thiện sức khỏe",
-                            startDate4, endDate4, 30, 876, 80, R.drawable.challenge_walk, "active"});
+                            startDate4, endDate4, 30, 876, 80, R.drawable.challenge_walk, null, "active"});
 
             // Thử thách 5: Uống đủ nước (bắt đầu hôm nay, kết thúc sau 14 ngày)
             long startDate5 = currentTime;
             long endDate5 = currentTime + (14 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    new Object[]{"Uống đủ 2 lít nước mỗi ngày", "Duy trì uống đủ 2 lít nước mỗi ngày để cơ thể khỏe mạnh",
-                            startDate5, endDate5, 14, 1024, 60, R.drawable.challenge_water, "active"});
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 
-            // Thử thách 6: Thiền 15 phút mỗi ngày (bắt đầu hôm nay, kết thúc sau 21 ngày)
+                    new Object[]{"Uống đủ 2 lít nước mỗi ngày", "Duy trì uống đủ 2 lít nước mỗi ngày để cơ thể khỏe mạnh",
+                            startDate5, endDate5, 14, 1024, 60, R.drawable.challenge_water, null, "active"});
+
+// Thử thách 6: Thiền 15 phút mỗi ngày (bắt đầu hôm nay, kết thúc sau 21 ngày)
             long startDate6 = currentTime;
             long endDate6 = currentTime + (21 * dayInMillis);
-            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            db.execSQL("INSERT INTO challenges (title, description, start_date, end_date, duration_days, participants, reward_points, image_resource, image_path, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     new Object[]{"Thiền 15 phút mỗi ngày", "Thực hành thiền định 15 phút mỗi ngày để giảm stress và cải thiện tinh thần",
-                            startDate6, endDate6, 21, 456, 70, R.drawable.challenge_meditation, "active"});
+                            startDate6, endDate6, 21, 456, 70, R.drawable.challenge_meditation, null, "active"});
         }
         checkChallenges.close();
 

@@ -26,7 +26,7 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_back"
-                app:tint="#2196F3" />
+                app:tint="#000000" />
 
 
             <TextView

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:background="@color/background_light_peach"
+        android:background="#FFFFFF"
         android:gravity="center_vertical">
 
         <ImageButton
@@ -22,7 +22,7 @@
             android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Back"
-            app:tint="#FFFFFF" />
+            app:tint="#000000" />
 
         <TextView
             android:layout_width="0dp"

@@ -59,7 +59,7 @@ public class MedicalRecordsActivity extends AppCompatActivity {
         filteredList = new ArrayList<>();
 
         adapter = new DoctorMedicalRecordAdapter(this, filteredList, record -> {
-            Intent intent = new Intent(MedicalRecordsActivity.this, ViewMedicalRecordDetailActivity.class);
+            Intent intent = new Intent(MedicalRecordsActivity.this, MedicalRecordDetailActivity.class);
             intent.putExtra("record_id", record.getId());
             startActivity(intent);
         });

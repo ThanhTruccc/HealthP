@@ -15,7 +15,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:background="@color/background_light_peach"
+            android:background="#FFFFFF"
             android:elevation="4dp">
 
             <ImageButton
@@ -254,7 +254,7 @@
                     android:id="@+id/grid_morning_slots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="4"
+                    android:columnCount="2"
                     android:layout_marginTop="8dp"
                     android:alignmentMode="alignBounds"
                     android:columnOrderPreserved="false">
@@ -292,7 +292,7 @@
                     android:id="@+id/grid_afternoon_slots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:columnCount="4"
+                    android:columnCount="2"
                     android:layout_marginTop="8dp"
                     android:alignmentMode="alignBounds"
                     android:columnOrderPreserved="false">
@@ -367,7 +367,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp"
-                android:background="#E8F5E9">
+                android:background="#E3F2FD">
 
                 <TextView
                     android:layout_width="wrap_content"

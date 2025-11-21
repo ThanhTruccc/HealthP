@@ -10,7 +10,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="@color/background_light_peach"
+        android:background="#FFFFFF"
         android:elevation="4dp">
 
         <ImageButton

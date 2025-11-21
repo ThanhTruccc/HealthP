@@ -101,11 +101,12 @@ public class BMICalculatorActivity extends AppCompatActivity {
             public void onValueChange(Slider slider, float value, boolean fromUser) {
                 if (!isUpdatingWeight) {
                     isUpdatingWeight = true;
-                    etWeight.setText(String.format(Locale.getDefault(), "%.1f", value));
+                    etWeight.setText(String.format(Locale.US, "%.1f", value)); // luôn dấu .
                     isUpdatingWeight = false;
                 }
             }
         });
+
 
         // Weight text input
         etWeight.addTextChangedListener(new TextWatcher() {
@@ -223,7 +224,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
 
         tvBmiCategory.setText(category.getName());
         tvBmiCategory.setTextColor(category.getColor());
-        tvBmiCategory.setBackgroundResource(category.getBadgeBackground());
 
         tvBmiDescription.setText(category.getDescription());
         tvAdvice.setText(category.getAdvice());
@@ -242,7 +242,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return new BMICategory(
                     "Thiếu cân",
                     0xFF4ECDC4,
-                    R.drawable.bmi_underweight_badge,
                     "Bạn đang thiếu cân. Cân nặng của bạn thấp hơn mức khuyến nghị.",
                     "• Tăng cường chế độ ăn uống dinh dưỡng\n• Ăn nhiều bữa nhỏ trong ngày\n• Tập luyện để tăng cơ bắp\n• Tham khảo ý kiến bác sĩ dinh dưỡng"
             );
@@ -250,7 +249,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return new BMICategory(
                     "Bình thường",
                     0xFF4CAF50,
-                    R.drawable.bmi_normal_badge,
                     "Tuyệt vời! Bạn có cân nặng lý tưởng. Hãy duy trì lối sống lành mạnh.",
                     "• Duy trì chế độ ăn uống cân bằng\n• Tập thể dục đều đặn 30 phút/ngày\n• Uống đủ 2 lít nước mỗi ngày\n• Ngủ đủ giấc 7-8 tiếng/đêm"
             );
@@ -258,7 +256,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return new BMICategory(
                     "Thừa cân",
                     0xFFFFD93D,
-                    R.drawable.bmi_overweight_badge,
                     "Bạn đang thừa cân. Cần chú ý điều chỉnh lối sống để cải thiện sức khỏe.",
                     "• Giảm lượng calo nạp vào\n• Tăng cường hoạt động thể chất\n• Hạn chế đồ ăn nhanh và đồ ngọt\n• Ăn nhiều rau xanh và trái cây"
             );
@@ -266,7 +263,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return new BMICategory(
                     "Béo phì độ I",
                     0xFFFF8C42,
-                    R.drawable.bmi_obese1_badge,
                     "Bạn đang béo phì độ I. Cần có kế hoạch giảm cân nghiêm túc.",
                     "• Tham khảo ý kiến bác sĩ chuyên khoa\n• Xây dựng kế hoạch ăn uống khoa học\n• Tập luyện có hướng dẫn từ HLV\n• Theo dõi cân nặng định kỳ"
             );
@@ -274,7 +270,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return new BMICategory(
                     "Béo phì độ II",
                     0xFFE74C3C,
-                    R.drawable.bmi_obese2_badge,
                     "Bạn đang béo phì độ II. Nguy cơ sức khỏe cao, cần tư vấn y tế ngay.",
                     "• KHẨN CẤP: Tham khảo bác sĩ ngay\n• Có thể cần can thiệp y tế\n• Xét nghiệm sức khỏe toàn diện\n• Theo dõi các bệnh lý liên quan"
             );
@@ -285,14 +280,12 @@ public class BMICalculatorActivity extends AppCompatActivity {
     private static class BMICategory {
         private String name;
         private int color;
-        private int badgeBackground;
         private String description;
         private String advice;
 
-        public BMICategory(String name, int color, int badgeBackground, String description, String advice) {
+        public BMICategory(String name, int color, String description, String advice) {
             this.name = name;
             this.color = color;
-            this.badgeBackground = badgeBackground;
             this.description = description;
             this.advice = advice;
         }
@@ -305,9 +298,6 @@ public class BMICalculatorActivity extends AppCompatActivity {
             return color;
         }
 
-        public int getBadgeBackground() {
-            return badgeBackground;
-        }
 
         public String getDescription() {
             return description;

@@ -3,14 +3,17 @@ package com.example.healthprofile;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Register_1_Activity extends AppCompatActivity {
     EditText edtFullName, edtPhone, edtEmail;
+    TextView tv_BackToLogin;
     Button btnNext;
     SQLiteDatabase db;
     @Override
@@ -22,6 +25,7 @@ public class Register_1_Activity extends AppCompatActivity {
         edtPhone = findViewById(R.id.edt_Phone);
         edtEmail = findViewById(R.id.edt_Email);
         btnNext = findViewById(R.id.btn_Next);
+        tv_BackToLogin = findViewById(R.id.tv_BackToLogin);
 
         db = openOrCreateDatabase("health_profile.db", MODE_PRIVATE, null);
         db.execSQL("CREATE TABLE IF NOT EXISTS user (" +
@@ -46,5 +50,11 @@ public class Register_1_Activity extends AppCompatActivity {
             intent.putExtra("email", email);
             startActivity(intent);
         });
+
+        tv_BackToLogin.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

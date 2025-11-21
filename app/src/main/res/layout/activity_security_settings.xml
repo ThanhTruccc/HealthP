@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:background="@color/background_light_peach"
+            android:background="#FFFFFF"
             android:gravity="center_vertical">
 
             <ImageButton

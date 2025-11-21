@@ -1,5 +1,6 @@
 package com.example.healthprofile;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -39,6 +40,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -65,6 +67,7 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
 
     private ImageView imgPreviewChallenge;
     private String selectedImagePath = null;
+    private Challenge editingChallenge = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,24 +179,20 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
                                 challenge.setParticipants(cursor.getInt(participantsIndex));
                             }
 
-                            // Load start_date và end_date (có thể là Long hoặc String)
                             int startDateIndex = cursor.getColumnIndex("start_date");
                             int endDateIndex = cursor.getColumnIndex("end_date");
 
                             if (startDateIndex >= 0 && endDateIndex >= 0) {
                                 try {
-                                    // Thử load dạng timestamp
                                     long startTimestamp = cursor.getLong(startDateIndex);
                                     long endTimestamp = cursor.getLong(endDateIndex);
 
                                     challenge.setStartDate(startTimestamp);
                                     challenge.setEndDate(endTimestamp);
 
-                                    // Convert to string for display
                                     challenge.setStartDate(sdf.format(new Date(startTimestamp)));
                                     challenge.setEndDate(sdf.format(new Date(endTimestamp)));
                                 } catch (Exception e) {
-                                    // Nếu không phải timestamp, thử load dạng string
                                     String startStr = cursor.getString(startDateIndex);
                                     String endStr = cursor.getString(endDateIndex);
                                     challenge.setStartDate(startStr);
@@ -221,12 +220,10 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
                                 challenge.setImagePath(cursor.getString(imagePathIndex));
                             }
 
-                            // Load status
                             int statusIndex = cursor.getColumnIndex("status");
                             if (statusIndex >= 0) {
                                 String statusStr = cursor.getString(statusIndex);
-                                // Convert string status to int for admin UI
-                                int statusInt = 1; // default active
+                                int statusInt = 1;
                                 if ("upcoming".equals(statusStr)) {
                                     statusInt = 0;
                                 } else if ("active".equals(statusStr)) {
@@ -267,7 +264,7 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
 
             adapter.notifyDataSetChanged();
 
-            tvTotalChallenges.setText("Tổng: " + challengeList.size() + " thử thách");
+            tvTotalChallenges.setText("Tổng: " + challengeList.size());
             updateEmptyState();
         }
     }
@@ -284,7 +281,9 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
 
     @Override
     public void onEditChallenge(Challenge challenge, int position) {
-        Toast.makeText(this, "Chức năng edit đang phát triển", Toast.LENGTH_SHORT).show();
+        editingChallenge = challenge;
+        selectedImagePath = challenge.getImagePath();
+        showAddEditDialog(challenge);
     }
 
     @Override
@@ -298,8 +297,285 @@ public class AdminChallengeManagementActivity extends AppCompatActivity
     }
 
     private void showAddChallengeDialog() {
-        Toast.makeText(this, "Thử thách đã được thêm sẵn trong MainActivity. Vui lòng restart app để xem!",
-                Toast.LENGTH_LONG).show();
+        editingChallenge = null;
+        selectedImagePath = null;
+        showAddEditDialog(null);
+    }
+
+    private void showAddEditDialog(Challenge challenge) {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit_challenge, null);
+
+        EditText edtTitle = dialogView.findViewById(R.id.edt_challenge_title);
+        EditText edtDescription = dialogView.findViewById(R.id.edt_challenge_description);
+        EditText edtStartDate = dialogView.findViewById(R.id.edt_start_date);
+        EditText edtEndDate = dialogView.findViewById(R.id.edt_end_date);
+        EditText edtRewardPoints = dialogView.findViewById(R.id.edt_reward_points);
+        Spinner spinnerStatus = dialogView.findViewById(R.id.spinner_status);
+        imgPreviewChallenge = dialogView.findViewById(R.id.img_preview_challenge);
+        Button btnSelectImage = dialogView.findViewById(R.id.btn_select_image);
+
+        // Setup status spinner
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item,
+                new String[]{"Sắp diễn ra", "Đang diễn ra", "Đã kết thúc"});
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStatus.setAdapter(statusAdapter);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        Calendar calendar = Calendar.getInstance();
+
+        // Date pickers
+        edtStartDate.setOnClickListener(v -> {
+            new DatePickerDialog(this, (view, year, month, day) -> {
+                calendar.set(year, month, day);
+                edtStartDate.setText(sdf.format(calendar.getTime()));
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        edtEndDate.setOnClickListener(v -> {
+            new DatePickerDialog(this, (view, year, month, day) -> {
+                calendar.set(year, month, day);
+                edtEndDate.setText(sdf.format(calendar.getTime()));
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+        });
+
+        btnSelectImage.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        });
+
+        // Fill data if editing
+        if (challenge != null) {
+            edtTitle.setText(challenge.getTitle());
+            edtDescription.setText(challenge.getDescription());
+            edtStartDate.setText(challenge.getStartDateStr());
+            edtEndDate.setText(challenge.getEndDateStr());
+            edtRewardPoints.setText(String.valueOf(challenge.getRewardPoints()));
+            spinnerStatus.setSelection(challenge.getStatusInt());
+
+            if (challenge.getImagePath() != null && !challenge.getImagePath().isEmpty()) {
+                File imageFile = new File(challenge.getImagePath());
+                if (imageFile.exists()) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(challenge.getImagePath());
+                    imgPreviewChallenge.setImageBitmap(bitmap);
+                }
+            }
+        }
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(challenge == null ? "Thêm thử thách" : "Sửa thử thách")
+                .setView(dialogView)
+                .setPositiveButton("Lưu", null)
+                .setNegativeButton("Hủy", null)
+                .create();
+
+        dialog.setOnShowListener(dialogInterface -> {
+            Button btnSave = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            btnSave.setOnClickListener(v -> {
+                String title = edtTitle.getText().toString().trim();
+                String description = edtDescription.getText().toString().trim();
+                String startDate = edtStartDate.getText().toString().trim();
+                String endDate = edtEndDate.getText().toString().trim();
+                String rewardPointsStr = edtRewardPoints.getText().toString().trim();
+                int status = spinnerStatus.getSelectedItemPosition();
+
+                if (title.isEmpty()) {
+                    edtTitle.setError("Vui lòng nhập tiêu đề");
+                    return;
+                }
+
+                if (startDate.isEmpty()) {
+                    edtStartDate.setError("Vui lòng chọn ngày bắt đầu");
+                    return;
+                }
+
+                if (endDate.isEmpty()) {
+                    edtEndDate.setError("Vui lòng chọn ngày kết thúc");
+                    return;
+                }
+
+                int rewardPoints = 0;
+                if (!rewardPointsStr.isEmpty()) {
+                    try {
+                        rewardPoints = Integer.parseInt(rewardPointsStr);
+                    } catch (NumberFormatException e) {
+                        edtRewardPoints.setError("Điểm không hợp lệ");
+                        return;
+                    }
+                }
+
+                try {
+                    Date start = sdf.parse(startDate);
+                    Date end = sdf.parse(endDate);
+
+                    if (end.before(start)) {
+                        Toast.makeText(this, "Ngày kết thúc phải sau ngày bắt đầu", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    long durationMillis = end.getTime() - start.getTime();
+                    int durationDays = (int) (durationMillis / (24 * 60 * 60 * 1000));
+
+                    Challenge newChallenge = new Challenge();
+                    if (challenge != null) {
+                        newChallenge.setId(challenge.getId());
+                    }
+                    newChallenge.setTitle(title);
+                    newChallenge.setDescription(description);
+                    newChallenge.setStartDate(start.getTime());
+                    newChallenge.setEndDate(end.getTime());
+                    newChallenge.setDurationDays(durationDays);
+                    newChallenge.setRewardPoints(rewardPoints);
+                    newChallenge.setStatus(status);
+                    newChallenge.setImagePath(selectedImagePath);
+
+                    if (challenge == null) {
+                        new AddChallengeTask(newChallenge).execute();
+                    } else {
+                        new UpdateChallengeTask(newChallenge).execute();
+                    }
+
+                    dialog.dismiss();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            });
+        });
+
+        dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            try {
+                Uri imageUri = data.getData();
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                // Save to internal storage
+                String fileName = "challenge_" + System.currentTimeMillis() + ".jpg";
+                File directory = new File(getFilesDir(), "challenge_images");
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                File imageFile = new File(directory, fileName);
+                FileOutputStream fos = new FileOutputStream(imageFile);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+                fos.close();
+
+                selectedImagePath = imageFile.getAbsolutePath();
+                imgPreviewChallenge.setImageBitmap(bitmap);
+
+                Toast.makeText(this, "Đã chọn ảnh", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Lỗi khi chọn ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class AddChallengeTask extends AsyncTask<Void, Void, Boolean> {
+        private Challenge challenge;
+
+        AddChallengeTask(Challenge challenge) {
+            this.challenge = challenge;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                String statusStr = challenge.getStatusInt() == 0 ? "upcoming" :
+                        challenge.getStatusInt() == 1 ? "active" : "completed";
+
+                String sql = "INSERT INTO challenges (title, description, start_date, end_date, " +
+                        "duration_days, reward_points, status, image_path, participants) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)";
+
+                db.execSQL(sql, new Object[]{
+                        challenge.getTitle(),
+                        challenge.getDescription(),
+                        challenge.getStartDate(),
+                        challenge.getEndDate(),
+                        challenge.getDurationDays(),
+                        challenge.getRewardPoints(),
+                        statusStr,
+                        challenge.getImagePath()
+                });
+
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, "Error adding challenge: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                Toast.makeText(AdminChallengeManagementActivity.this,
+                        "Đã thêm thử thách!", Toast.LENGTH_SHORT).show();
+                loadChallenges();
+            } else {
+                Toast.makeText(AdminChallengeManagementActivity.this,
+                        "Lỗi khi thêm!", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class UpdateChallengeTask extends AsyncTask<Void, Void, Boolean> {
+        private Challenge challenge;
+
+        UpdateChallengeTask(Challenge challenge) {
+            this.challenge = challenge;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                String statusStr = challenge.getStatusInt() == 0 ? "upcoming" :
+                        challenge.getStatusInt() == 1 ? "active" : "completed";
+
+                String sql = "UPDATE challenges SET title = ?, description = ?, start_date = ?, " +
+                        "end_date = ?, duration_days = ?, reward_points = ?, status = ?, image_path = ? " +
+                        "WHERE id = ?";
+
+                db.execSQL(sql, new Object[]{
+                        challenge.getTitle(),
+                        challenge.getDescription(),
+                        challenge.getStartDate(),
+                        challenge.getEndDate(),
+                        challenge.getDurationDays(),
+                        challenge.getRewardPoints(),
+                        statusStr,
+                        challenge.getImagePath(),
+                        challenge.getId()
+                });
+
+                return true;
+            } catch (Exception e) {
+                Log.e(TAG, "Error updating challenge: " + e.getMessage());
+                e.printStackTrace();
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            if (success) {
+                Toast.makeText(AdminChallengeManagementActivity.this,
+                        "Đã cập nhật thử thách!", Toast.LENGTH_SHORT).show();
+                loadChallenges();
+            } else {
+                Toast.makeText(AdminChallengeManagementActivity.this,
+                        "Lỗi khi cập nhật!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void showDeleteConfirmDialog(Challenge challenge) {

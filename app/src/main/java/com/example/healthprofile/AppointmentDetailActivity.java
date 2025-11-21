@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +26,7 @@ public class AppointmentDetailActivity extends AppCompatActivity {
     private CardView cardStatus;
     private Button btnConfirm, btnCancel, btnComplete, btnStartExam;
     private LinearLayout layoutActions;
-    private CardView btnBack;
+    private ImageView btnBack;
 
     private SQLiteDatabase db;
     private Appointment appointment;

@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.healthprofile.BMICalculatorActivity;
 import com.example.healthprofile.HealthProfileActivity;
+import com.example.healthprofile.HealthTipsActivity;
 import com.example.healthprofile.MedicationReminderActivity;
 import com.example.healthprofile.R;
 import com.example.healthprofile.model.HealthProfile;
@@ -34,7 +35,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class UtilityFragment extends Fragment {
 
-    private CardView cardHealthProfile, cardBMICalculator, cardHealthTips, cardMedicalHistory, cardMedicationReminder;
+    private CardView cardHealthProfile, cardBMICalculator, cardHealthTips, cardMedicationReminder;
     private TextView tvProfileStatus, tvBmiValue, tvMedicationCount;
 
     // SQLiteDatabase trực tiếp
@@ -44,8 +45,6 @@ public class UtilityFragment extends Fragment {
     // Database constants
     private static final String DATABASE_NAME = "health_profile.db";
     private static final String TABLE_HEALTH_PROFILES = "health_profiles";
-
-    // ExecutorService thay cho AsyncTask
     private ExecutorService executorService;
     private Handler mainHandler;
 
@@ -55,7 +54,6 @@ public class UtilityFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_utility, container, false);
 
-        // Mở database trực tiếp
         db = requireContext().openOrCreateDatabase(DATABASE_NAME, MODE_PRIVATE, null);
 
         // Khởi tạo ExecutorService và Handler
@@ -78,7 +76,6 @@ public class UtilityFragment extends Fragment {
         cardHealthProfile = view.findViewById(R.id.card_health_profile);
         cardBMICalculator = view.findViewById(R.id.card_bmi_calculator);
         cardHealthTips = view.findViewById(R.id.card_health_tips);
-        cardMedicalHistory = view.findViewById(R.id.card_medical_history);
         cardMedicationReminder = view.findViewById(R.id.card_medication_reminder);
         tvProfileStatus = view.findViewById(R.id.tv_profile_status);
         tvBmiValue = view.findViewById(R.id.tv_bmi_value);
@@ -246,12 +243,8 @@ public class UtilityFragment extends Fragment {
 
         // Card Mẹo sức khỏe
         cardHealthTips.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
-        });
-
-        // Card Lịch sử khám
-        cardMedicalHistory.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "Chức năng đang phát triển", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), HealthTipsActivity.class);
+            startActivity(intent);
         });
 
         // Card Nhắc nhở uống thuốc

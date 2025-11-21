@@ -13,7 +13,7 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:background="@color/background_light_peach"
+        android:background="#FFFFFF"
         android:elevation="4dp">
 
 

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ import java.util.concurrent.Executors;
  * Fragment hiển thị các dịch vụ y tế và danh sách bác sĩ
  */
 public class ServiceFragment extends Fragment {
+
+    private static final String TAG = "ServiceFragment";
 
     private RecyclerView rvDoctors;
     private DoctorAdapter doctorAdapter;
@@ -111,10 +114,12 @@ public class ServiceFragment extends Fragment {
                 }
 
                 if (doctors != null && !doctors.isEmpty()) {
+                    Log.d(TAG, "Loaded " + doctors.size() + " doctors");
                     doctorList.clear();
                     doctorList.addAll(doctors);
                     doctorAdapter.notifyDataSetChanged();
                 } else {
+                    Log.w(TAG, "No doctors found");
                     Toast.makeText(getContext(), "Không có bác sĩ nào", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -132,53 +137,98 @@ public class ServiceFragment extends Fragment {
             String sql = "SELECT * FROM " + TABLE_DOCTORS + " ORDER BY rating DESC";
             Cursor cursor = db.rawQuery(sql, null);
 
+            Log.d(TAG, "Total doctors in database: " + cursor.getCount());
+
             if (cursor.moveToFirst()) {
                 do {
-                    Doctor doctor = new Doctor();
-                    doctor.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                    doctor.setName(cursor.getString(cursor.getColumnIndexOrThrow("name")));
-                    doctor.setDegree(cursor.getString(cursor.getColumnIndexOrThrow("degree")));
+                    try {
+                        Doctor doctor = new Doctor();
 
-                    // Kiểm tra cột specialty
-                    int specialtyIndex = cursor.getColumnIndex("specialty");
-                    if (specialtyIndex >= 0) {
-                        doctor.setSpecialty(cursor.getString(specialtyIndex));
+                        // ID
+                        int idIndex = cursor.getColumnIndex("id");
+                        if (idIndex >= 0) {
+                            doctor.setId(cursor.getInt(idIndex));
+                        }
+
+                        // Name
+                        int nameIndex = cursor.getColumnIndex("name");
+                        if (nameIndex >= 0 && !cursor.isNull(nameIndex)) {
+                            doctor.setName(cursor.getString(nameIndex));
+                        }
+
+                        // Degree
+                        int degreeIndex = cursor.getColumnIndex("degree");
+                        if (degreeIndex >= 0 && !cursor.isNull(degreeIndex)) {
+                            doctor.setDegree(cursor.getString(degreeIndex));
+                        }
+
+                        // Specialty
+                        int specialtyIndex = cursor.getColumnIndex("specialty");
+                        if (specialtyIndex >= 0 && !cursor.isNull(specialtyIndex)) {
+                            doctor.setSpecialty(cursor.getString(specialtyIndex));
+                        }
+
+                        // Workplace
+                        int workplaceIndex = cursor.getColumnIndex("workplace");
+                        if (workplaceIndex >= 0 && !cursor.isNull(workplaceIndex)) {
+                            doctor.setWorkplace(cursor.getString(workplaceIndex));
+                        }
+
+                        // Rating
+                        int ratingIndex = cursor.getColumnIndex("rating");
+                        if (ratingIndex >= 0 && !cursor.isNull(ratingIndex)) {
+                            doctor.setRating(cursor.getFloat(ratingIndex));
+                        }
+
+                        // Experience
+                        int experienceIndex = cursor.getColumnIndex("experience");
+                        if (experienceIndex >= 0 && !cursor.isNull(experienceIndex)) {
+                            doctor.setExperience(cursor.getInt(experienceIndex));
+                        }
+
+                        // Image Resource (ảnh mặc định)
+                        int imageResourceIndex = cursor.getColumnIndex("image_resource");
+                        if (imageResourceIndex >= 0 && !cursor.isNull(imageResourceIndex)) {
+                            int imageResource = cursor.getInt(imageResourceIndex);
+                            if (imageResource > 0) {
+                                doctor.setImageResource(imageResource);
+                            } else {
+                                doctor.setImageResource(R.drawable.doctor_1); // Default
+                            }
+                        } else {
+                            doctor.setImageResource(R.drawable.doctor_1); // Default
+                        }
+
+                        // Image Path (ảnh custom từ user upload)
+                        int imagePathIndex = cursor.getColumnIndex("image_path");
+                        if (imagePathIndex >= 0 && !cursor.isNull(imagePathIndex)) {
+                            String imagePath = cursor.getString(imagePathIndex);
+                            if (imagePath != null && !imagePath.isEmpty()) {
+                                doctor.setImagePath(imagePath);
+                                Log.d(TAG, "Doctor " + doctor.getName() + " has custom image: " + imagePath);
+                            }
+                        }
+
+                        doctors.add(doctor);
+                        Log.d(TAG, "Loaded doctor: " + doctor.getName() +
+                                ", ID=" + doctor.getId() +
+                                ", imageResource=" + doctor.getImageResource() +
+                                ", imagePath=" + (doctor.getImagePath() != null ? doctor.getImagePath() : "null"));
+
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error parsing doctor: " + e.getMessage());
+                        e.printStackTrace();
                     }
-
-                    // Kiểm tra cột workplace
-                    int workplaceIndex = cursor.getColumnIndex("workplace");
-                    if (workplaceIndex >= 0) {
-                        doctor.setWorkplace(cursor.getString(workplaceIndex));
-                    }
-
-                    doctor.setRating(cursor.getFloat(cursor.getColumnIndexOrThrow("rating")));
-                    doctor.setExperience(cursor.getInt(cursor.getColumnIndexOrThrow("experience")));
-                    doctor.setImageResource(cursor.getInt(cursor.getColumnIndexOrThrow("image_resource")));
-
-                    doctors.add(doctor);
                 } while (cursor.moveToNext());
             }
             cursor.close();
 
         } catch (Exception e) {
+            Log.e(TAG, "Error loading doctors: " + e.getMessage());
             e.printStackTrace();
         }
 
         return doctors;
-    }
-
-    /**
-     * Đếm số lượng bác sĩ
-     */
-    private int getDoctorCount() {
-        String sql = "SELECT COUNT(*) FROM " + TABLE_DOCTORS;
-        Cursor cursor = db.rawQuery(sql, null);
-        int count = 0;
-        if (cursor.moveToFirst()) {
-            count = cursor.getInt(0);
-        }
-        cursor.close();
-        return count;
     }
 
     private void setupClickListeners() {
@@ -196,6 +246,7 @@ public class ServiceFragment extends Fragment {
                 if (!doctorList.isEmpty()) {
                     Doctor firstDoctor = doctorList.get(0);
                     Intent intent = new Intent(getActivity(), BookAppointmentActivity.class);
+                    intent.putExtra("doctor_id", firstDoctor.getId());
                     intent.putExtra("doctor_name", firstDoctor.getDegree() + " " + firstDoctor.getName());
                     intent.putExtra("doctor_rating", firstDoctor.getRating());
                     intent.putExtra("doctor_experience", firstDoctor.getExperience());
@@ -212,6 +263,7 @@ public class ServiceFragment extends Fragment {
     public void onResume() {
         super.onResume();
         // Reload danh sách bác sĩ khi quay lại fragment
+        Log.d(TAG, "onResume: Reloading doctors");
         loadDoctorsFromDatabase();
     }
 

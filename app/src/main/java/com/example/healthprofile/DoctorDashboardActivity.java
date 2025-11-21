@@ -6,12 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,21 +31,22 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private TextView tvTodayCount, tvPendingCount, tvCompletedCount;
     private RecyclerView rvAppointments;
     private LinearLayout emptyState;
-    private CardView btnLogout;
+    private Button btnLogout;
 
     private SQLiteDatabase db;
+    private SharedPreferences prefs;
     private int doctorId;
     private String doctorName;
     private List<Appointment> appointmentList;
-    private DoctorAppointmentAdapter adapter; // ← ĐÃ SỬA: Đổi từ AppointmentAdapter sang DoctorAppointmentAdapter
+    private DoctorAppointmentAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doctor_dashboard);
 
-        // Kiểm tra session - dùng UserSession chung
-        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        // Kiểm tra session
+        prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
         String role = prefs.getString("role", "");
 
         if (!"doctor".equals(role)) {
@@ -62,7 +64,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             doctorId = cursor.getInt(0);
         } else {
-            // Nếu chưa có, tạo doctor_id = user_id
             doctorId = userId;
         }
         cursor.close();
@@ -82,7 +83,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         emptyState = findViewById(R.id.empty_state_appointments);
         btnLogout = findViewById(R.id.btn_logout);
 
-        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
         tvDoctorName.setText(prefs.getString("fullName", ""));
 
         // Lấy specialization từ user_doctors
@@ -93,12 +93,12 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         }
         cursor.close();
 
-        btnLogout.setOnClickListener(v -> logout());
+        // Xử lý nút đăng xuất - hiển thị dialog xác nhận
+        btnLogout.setOnClickListener(v -> showLogoutDialog());
 
         rvAppointments.setLayoutManager(new LinearLayoutManager(this));
         appointmentList = new ArrayList<>();
 
-        // ← ĐÃ SỬA: Sử dụng DoctorAppointmentAdapter
         adapter = new DoctorAppointmentAdapter(this, appointmentList, new DoctorAppointmentAdapter.OnAppointmentClickListener() {
             @Override
             public void onViewClick(Appointment appointment) {
@@ -146,7 +146,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     private void loadAppointments() {
         appointmentList.clear();
 
-        // Query lấy tất cả lịch hẹn của bác sĩ, sắp xếp theo ngày mới nhất
         Cursor cursor = db.rawQuery("SELECT * FROM appointments WHERE doctor_id = " + doctorId +
                 " ORDER BY appointment_date DESC, appointment_time DESC", null);
 
@@ -163,19 +162,15 @@ public class DoctorDashboardActivity extends AppCompatActivity {
                 appointment.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
                 appointment.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
 
-
-                // Kiểm tra notes có null không
                 int notesIndex = cursor.getColumnIndexOrThrow("notes");
                 String notes = cursor.isNull(notesIndex) ? "" : cursor.getString(notesIndex);
                 appointment.setNotes(notes);
 
-                // Kiểm tra phone có null không
                 int phoneIndex = cursor.getColumnIndex("phone");
                 if (phoneIndex != -1 && !cursor.isNull(phoneIndex)) {
                     appointment.setPhone(cursor.getString(phoneIndex));
                 }
 
-                // Kiểm tra fee có null không
                 int feeIndex = cursor.getColumnIndex("fee");
                 if (feeIndex != -1 && !cursor.isNull(feeIndex)) {
                     appointment.setFee(cursor.getInt(feeIndex));
@@ -204,7 +199,6 @@ public class DoctorDashboardActivity extends AppCompatActivity {
     }
 
     private void startExamination(Appointment appointment) {
-        // Chuyển đến màn hình khám bệnh
         Intent intent = new Intent(this, CreateMedicalRecordActivity.class);
         intent.putExtra("appointment_id", appointment.getId());
         intent.putExtra("patient_email", appointment.getPatientEmail());
@@ -212,14 +206,35 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void logout() {
-        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+    /**
+     * Hiển thị dialog xác nhận đăng xuất
+     */
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Đăng xuất")
+                .setMessage("Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?")
+                .setPositiveButton("Đăng xuất", (dialog, which) -> {
+                    performLogout();
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    /**
+     * Thực hiện đăng xuất
+     */
+    private void performLogout() {
+        // Xóa session đăng nhập
         prefs.edit().clear().apply();
 
+        // Hiển thị thông báo
+        Toast.makeText(this, "Đã đăng xuất thành công!", Toast.LENGTH_SHORT).show();
+
+        // Chuyển về màn hình đăng nhập
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish();
+        finishAffinity();
     }
 
     @Override

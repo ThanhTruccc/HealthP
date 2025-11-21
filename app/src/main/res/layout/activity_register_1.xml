@@ -20,13 +20,12 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="32dp"
             app:cardCornerRadius="90dp"
-            app:cardElevation="8dp"
             app:cardBackgroundColor="@android:color/white">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="24dp"
+                android:padding="15dp"
                 android:src="@drawable/logo_main"
                 android:contentDescription="Logo" />
         </androidx.cardview.widget.CardView>
@@ -94,7 +93,7 @@
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxStrokeColor="#16336D"
             app:hintTextColor="#16336D"
-            app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+            app:startIconDrawable="@drawable/ic_person"
             app:startIconTint="#16336D">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -212,7 +211,6 @@
             app:cornerRadius="30dp"
             app:backgroundTint="#16336D"
             app:elevation="4dp"
-            app:icon="@android:drawable/ic_media_play"
             app:iconGravity="textEnd"
             app:iconTint="@android:color/white" />
 

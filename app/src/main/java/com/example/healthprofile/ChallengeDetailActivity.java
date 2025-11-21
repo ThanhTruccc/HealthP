@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChallengeDetailActivity extends AppCompatActivity implements ChallengeAdapter.OnChallengeClickListener {
+
+    private static final String TAG = "ChallengeDetail";
 
     private RecyclerView rvAllChallenges;
     private ChallengeAdapter adapter;
@@ -79,29 +82,82 @@ public class ChallengeDetailActivity extends AppCompatActivity implements Challe
                 String sql = "SELECT * FROM challenges WHERE status = 'active' ORDER BY end_date ASC";
                 Cursor cursor = db.rawQuery(sql, null);
 
+                Log.d(TAG, "Total challenges found: " + cursor.getCount());
+
                 if (cursor.moveToFirst()) {
                     do {
-                        Challenge challenge = new Challenge();
-                        challenge.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                        challenge.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
-                        challenge.setDescription(cursor.getString(cursor.getColumnIndexOrThrow("description")));
-                        challenge.setStartDate(cursor.getLong(cursor.getColumnIndexOrThrow("start_date")));
-                        challenge.setEndDate(cursor.getLong(cursor.getColumnIndexOrThrow("end_date")));
-                        challenge.setDurationDays(cursor.getInt(cursor.getColumnIndexOrThrow("duration_days")));
-                        challenge.setParticipants(cursor.getInt(cursor.getColumnIndexOrThrow("participants")));
-                        challenge.setRewardPoints(cursor.getInt(cursor.getColumnIndexOrThrow("reward_points")));
-                        challenge.setImageResource(cursor.getInt(cursor.getColumnIndexOrThrow("image_resource")));
-                        challenge.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                        try {
+                            Challenge challenge = new Challenge();
+                            challenge.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                            challenge.setTitle(cursor.getString(cursor.getColumnIndexOrThrow("title")));
 
-                        // Kiểm tra user đã tham gia chưa
-                        boolean isJoined = checkUserJoinedChallenge(challenge.getId());
-                        challenge.setJoined(isJoined);
+                            int descIndex = cursor.getColumnIndex("description");
+                            if (descIndex >= 0 && !cursor.isNull(descIndex)) {
+                                challenge.setDescription(cursor.getString(descIndex));
+                            }
 
-                        challenges.add(challenge);
+                            int startDateIndex = cursor.getColumnIndex("start_date");
+                            if (startDateIndex >= 0 && !cursor.isNull(startDateIndex)) {
+                                challenge.setStartDate(cursor.getLong(startDateIndex));
+                            }
+
+                            int endDateIndex = cursor.getColumnIndex("end_date");
+                            if (endDateIndex >= 0 && !cursor.isNull(endDateIndex)) {
+                                challenge.setEndDate(cursor.getLong(endDateIndex));
+                            }
+
+                            int durationIndex = cursor.getColumnIndex("duration_days");
+                            if (durationIndex >= 0 && !cursor.isNull(durationIndex)) {
+                                challenge.setDurationDays(cursor.getInt(durationIndex));
+                            }
+
+                            int participantsIndex = cursor.getColumnIndex("participants");
+                            if (participantsIndex >= 0 && !cursor.isNull(participantsIndex)) {
+                                challenge.setParticipants(cursor.getInt(participantsIndex));
+                            }
+
+                            int rewardIndex = cursor.getColumnIndex("reward_points");
+                            if (rewardIndex >= 0 && !cursor.isNull(rewardIndex)) {
+                                challenge.setRewardPoints(cursor.getInt(rewardIndex));
+                            }
+
+                            // FIXED: Load cả image_resource và image_path
+                            int imageResourceIndex = cursor.getColumnIndex("image_resource");
+                            if (imageResourceIndex >= 0 && !cursor.isNull(imageResourceIndex)) {
+                                int imageResource = cursor.getInt(imageResourceIndex);
+                                if (imageResource > 0) {
+                                    challenge.setImageResource(imageResource);
+                                }
+                            }
+
+                            int imagePathIndex = cursor.getColumnIndex("image_path");
+                            if (imagePathIndex >= 0 && !cursor.isNull(imagePathIndex)) {
+                                String imagePath = cursor.getString(imagePathIndex);
+                                if (imagePath != null && !imagePath.isEmpty()) {
+                                    challenge.setImagePath(imagePath);
+                                }
+                            }
+
+                            int statusIndex = cursor.getColumnIndex("status");
+                            if (statusIndex >= 0 && !cursor.isNull(statusIndex)) {
+                                challenge.setStatus(cursor.getString(statusIndex));
+                            }
+
+                            // Kiểm tra user đã tham gia chưa
+                            boolean isJoined = checkUserJoinedChallenge(challenge.getId());
+                            challenge.setJoined(isJoined);
+
+                            challenges.add(challenge);
+                            Log.d(TAG, "Loaded: " + challenge.getTitle());
+                        } catch (Exception e) {
+                            Log.e(TAG, "Error parsing challenge: " + e.getMessage());
+                            e.printStackTrace();
+                        }
                     } while (cursor.moveToNext());
                 }
                 cursor.close();
             } catch (Exception e) {
+                Log.e(TAG, "Error loading challenges: " + e.getMessage());
                 e.printStackTrace();
             }
 
@@ -110,6 +166,7 @@ public class ChallengeDetailActivity extends AppCompatActivity implements Challe
 
         @Override
         protected void onPostExecute(List<Challenge> challenges) {
+            Log.d(TAG, "Loaded " + challenges.size() + " challenges");
             challengeList.clear();
             challengeList.addAll(challenges);
             adapter.notifyDataSetChanged();
@@ -184,6 +241,7 @@ public class ChallengeDetailActivity extends AppCompatActivity implements Challe
 
                 return true;
             } catch (Exception e) {
+                Log.e(TAG, "Error joining challenge: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             }

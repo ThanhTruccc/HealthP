@@ -15,19 +15,18 @@
 
         <!-- Logo với hiệu ứng chuyên nghiệp -->
         <androidx.cardview.widget.CardView
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_marginTop="40dp"
             android:layout_marginBottom="32dp"
             app:cardCornerRadius="110dp"
-            app:cardElevation="12dp"
             app:cardBackgroundColor="@android:color/white">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/logo_main"
-                android:padding="32dp"
+                android:padding="15dp"
                 android:contentDescription="Logo ứng dụng y tế" />
         </androidx.cardview.widget.CardView>
 
@@ -48,7 +47,7 @@
             android:text="Sức khỏe"
             android:textSize="32sp"
             android:textStyle="bold"
-            android:textColor="#0F2CAD"
+            android:textColor="#1C47A0"
             android:fontFamily="sans-serif-medium"
             android:layout_marginBottom="12dp"/>
 
@@ -82,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp"
+            app:cardElevation="2dp"
             app:cardBackgroundColor="#E0F2F1">
 
             <LinearLayout

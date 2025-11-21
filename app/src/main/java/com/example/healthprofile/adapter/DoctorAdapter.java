@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import java.util.List;
 
 public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorViewHolder> {
 
+    private static final String TAG = "DoctorAdapter";
     private Context context;
     private List<Doctor> doctors;
 
@@ -48,13 +50,16 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorView
         holder.tvDoctorDegree.setText(doctor.getDegree());
         holder.tvRating.setText(doctor.getRatingText());
         holder.tvExperience.setText(doctor.getExperienceText());
-        holder.ivDoctorAvatar.setImageResource(doctor.getImageResource());
+
+        // FIXED: Load ảnh - ưu tiên image_path trước
+        loadDoctorImage(holder.ivDoctorAvatar, doctor);
 
         // Nút đặt lịch khám
         holder.btnBookConsultation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, BookAppointmentActivity.class);
+                intent.putExtra("doctor_id", doctor.getId());
                 intent.putExtra("doctor_name", doctor.getDegree() + " " + doctor.getName());
                 intent.putExtra("doctor_rating", doctor.getRating());
                 intent.putExtra("doctor_experience", doctor.getExperience());
@@ -78,6 +83,44 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorView
     }
 
     /**
+     * Load ảnh bác sĩ - ưu tiên custom image từ image_path
+     */
+    private void loadDoctorImage(ImageView imageView, Doctor doctor) {
+        // Kiểm tra có ảnh custom không
+        if (doctor.getImagePath() != null && !doctor.getImagePath().isEmpty()) {
+            File imageFile = new File(doctor.getImagePath());
+
+            if (imageFile.exists()) {
+                try {
+                    Bitmap bitmap = BitmapFactory.decodeFile(doctor.getImagePath());
+                    if (bitmap != null) {
+                        imageView.setImageBitmap(bitmap);
+                        Log.d(TAG, "Loaded custom image for: " + doctor.getName());
+                        return;
+                    } else {
+                        Log.w(TAG, "Failed to decode bitmap for: " + doctor.getName());
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error loading custom image: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                Log.w(TAG, "Image file not found: " + doctor.getImagePath());
+            }
+        }
+
+        // Fallback: dùng ảnh mặc định từ resources
+        int imageResource = doctor.getImageResource();
+        if (imageResource != 0) {
+            imageView.setImageResource(imageResource);
+            Log.d(TAG, "Loaded default image for: " + doctor.getName());
+        } else {
+            imageView.setImageResource(R.drawable.doctor_1);
+            Log.d(TAG, "Loaded fallback image for: " + doctor.getName());
+        }
+    }
+
+    /**
      * Hiển thị dialog chi tiết thông tin bác sĩ
      */
     private void showDoctorDetailDialog(Doctor doctor) {
@@ -91,18 +134,8 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorView
         TextView tvExperience = dialogView.findViewById(R.id.tv_doctor_experience_detail);
         TextView tvRating = dialogView.findViewById(R.id.tv_doctor_rating_detail);
 
-        // Hiển thị ảnh bác sĩ
-        if (doctor.getImagePath() != null && !doctor.getImagePath().isEmpty()) {
-            File imageFile = new File(doctor.getImagePath());
-            if (imageFile.exists()) {
-                Bitmap bitmap = BitmapFactory.decodeFile(doctor.getImagePath());
-                imgDoctor.setImageBitmap(bitmap);
-            } else {
-                imgDoctor.setImageResource(doctor.getImageResource());
-            }
-        } else {
-            imgDoctor.setImageResource(doctor.getImageResource());
-        }
+        // Hiển thị ảnh bác sĩ - ưu tiên custom image
+        loadDoctorImage(imgDoctor, doctor);
 
         // Hiển thị thông tin chi tiết
         tvName.setText(doctor.getName());
@@ -118,6 +151,7 @@ public class DoctorAdapter extends RecyclerView.Adapter<DoctorAdapter.DoctorView
                 .setPositiveButton("Đặt lịch khám", (dialogInterface, which) -> {
                     // Chuyển đến màn hình đặt lịch
                     Intent intent = new Intent(context, BookAppointmentActivity.class);
+                    intent.putExtra("doctor_id", doctor.getId());
                     intent.putExtra("doctor_name", doctor.getDegree() + " " + doctor.getName());
                     intent.putExtra("doctor_rating", doctor.getRating());
                     intent.putExtra("doctor_experience", doctor.getExperience());

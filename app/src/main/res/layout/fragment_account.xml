@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/background_light_peach"
     android:fillViewport="true">
 
     <LinearLayout
@@ -217,9 +217,9 @@
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🚪 Đăng xuất"
+            android:text="Đăng xuất"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#F44336"
+            android:backgroundTint="@color/primary_red_dark"
             android:padding="16dp"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -228,7 +228,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Health Profile v1.0.0"
+            android:text="Health Profile v1.1.2"
             android:textSize="12sp"
             android:textColor="#999999"
             android:gravity="center"
