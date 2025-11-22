@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.healthprofile.BMICalculatorActivity;
 import com.example.healthprofile.BookAppointmentActivity;
 import com.example.healthprofile.ChallengeDetailActivity;
+import com.example.healthprofile.ExerciseTrackerActivity;
 import com.example.healthprofile.HealthGaugeView;
 import com.example.healthprofile.HealthTipsActivity;
 import com.example.healthprofile.R;
@@ -110,7 +111,7 @@ public class HomeFragment extends Fragment implements ChallengeAdapter.OnChallen
         View menuSupply = view.findViewById(R.id.menu_supply);
         if (menuSupply != null) {
             menuSupply.setOnClickListener(v -> {
-                Intent intent = new Intent(getContext(), HealthTipsActivity.class);
+                Intent intent = new Intent(getContext(), ExerciseTrackerActivity.class);
                 startActivity(intent);
             });
         }
