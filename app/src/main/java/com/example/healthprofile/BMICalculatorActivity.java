@@ -1,6 +1,7 @@
 package com.example.healthprofile;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
@@ -42,9 +43,18 @@ public class BMICalculatorActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bmi_calculator);
 
-        // Lấy email từ SharedPreferences
-        userEmail = getSharedPreferences("HealthProfile", MODE_PRIVATE)
-                .getString("userEmail", "");
+        // Lấy email từ SharedPreferences - Thử cả 2 nguồn
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        userEmail = prefs.getString("email", "");
+
+        // Nếu không có trong UserSession, thử HealthProfile
+        if (userEmail.isEmpty()) {
+            SharedPreferences healthPrefs = getSharedPreferences("HealthProfile", MODE_PRIVATE);
+            userEmail = healthPrefs.getString("userEmail", "");
+        }
+
+        // Debug
+        Toast.makeText(this, "Email: " + (userEmail.isEmpty() ? "Chưa đăng nhập" : userEmail), Toast.LENGTH_SHORT).show();
 
         initDatabase();
         initViews();

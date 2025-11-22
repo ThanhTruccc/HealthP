@@ -1,6 +1,7 @@
 package com.example.healthprofile;
 
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -37,14 +38,41 @@ public class BMIHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bmi_history);
 
-        // Lấy email từ SharedPreferences hoặc Intent
-        userEmail = getSharedPreferences("HealthProfile", MODE_PRIVATE)
-                .getString("userEmail", "");
+        // Lấy email từ nhiều nguồn
+        getUserEmail();
 
         initViews();
         initDatabase();
         loadBMIHistory();
         setupClickListeners();
+    }
+
+    private void getUserEmail() {
+        // Thử lấy từ Intent trước
+        if (getIntent() != null) {
+            userEmail = getIntent().getStringExtra("userEmail");
+            if (userEmail == null) {
+                userEmail = getIntent().getStringExtra("email");
+            }
+        }
+
+        // Nếu không có trong Intent, lấy từ SharedPreferences
+        if (userEmail == null || userEmail.isEmpty()) {
+            // Thử UserSession trước (đây là nơi LoginActivity lưu)
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            userEmail = prefs.getString("email", "");
+
+            // Nếu không có, thử HealthProfile
+            if (userEmail.isEmpty()) {
+                SharedPreferences healthPrefs = getSharedPreferences("HealthProfile", MODE_PRIVATE);
+                userEmail = healthPrefs.getString("userEmail", "");
+
+                if (userEmail.isEmpty()) {
+                    userEmail = healthPrefs.getString("email", "");
+                }
+            }
+        }
+
     }
 
     private void initViews() {
@@ -77,27 +105,52 @@ public class BMIHistoryActivity extends AppCompatActivity {
     private void loadBMIHistory() {
         bmiRecords.clear();
 
-        Cursor cursor = db.rawQuery(
-                "SELECT * FROM bmi_records WHERE user_email = ? ORDER BY timestamp DESC",
-                new String[]{userEmail}
-        );
+        try {
+            // Debug: Kiểm tra tổng số records trong DB
+            Cursor totalCursor = db.rawQuery("SELECT COUNT(*) FROM bmi_records", null);
+            if (totalCursor.moveToFirst()) {
+                int total = totalCursor.getInt(0);
 
-        if (cursor.moveToFirst()) {
-            do {
-                BMIRecord record = new BMIRecord();
-                record.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                record.setGender(cursor.getString(cursor.getColumnIndexOrThrow("gender")));
-                record.setAge(cursor.getInt(cursor.getColumnIndexOrThrow("age")));
-                record.setHeight(cursor.getFloat(cursor.getColumnIndexOrThrow("height")));
-                record.setWeight(cursor.getFloat(cursor.getColumnIndexOrThrow("weight")));
-                record.setBmi(cursor.getFloat(cursor.getColumnIndexOrThrow("bmi")));
-                record.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
-                record.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+            }
+            totalCursor.close();
 
-                bmiRecords.add(record);
-            } while (cursor.moveToNext());
+            // Lấy records của user hiện tại
+            Cursor cursor = db.rawQuery(
+                    "SELECT * FROM bmi_records WHERE user_email = ? ORDER BY timestamp DESC",
+                    new String[]{userEmail}
+            );
+
+            if (cursor.moveToFirst()) {
+                do {
+                    BMIRecord record = new BMIRecord();
+                    record.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+
+                    // Kiểm tra cột gender có tồn tại không
+                    int genderIndex = cursor.getColumnIndex("gender");
+                    if (genderIndex >= 0) {
+                        record.setGender(cursor.getString(genderIndex));
+                    }
+
+                    int ageIndex = cursor.getColumnIndex("age");
+                    if (ageIndex >= 0) {
+                        record.setAge(cursor.getInt(ageIndex));
+                    }
+
+                    record.setHeight(cursor.getFloat(cursor.getColumnIndexOrThrow("height")));
+                    record.setWeight(cursor.getFloat(cursor.getColumnIndexOrThrow("weight")));
+                    record.setBmi(cursor.getFloat(cursor.getColumnIndexOrThrow("bmi")));
+                    record.setCategory(cursor.getString(cursor.getColumnIndexOrThrow("category")));
+                    record.setTimestamp(cursor.getLong(cursor.getColumnIndexOrThrow("timestamp")));
+
+                    bmiRecords.add(record);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-        cursor.close();
 
         updateUI();
     }
@@ -146,35 +199,36 @@ public class BMIHistoryActivity extends AppCompatActivity {
     private void showDeleteAllConfirmDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("Xóa tất cả")
-                .setMessage("Bạn có chắc muốn xóa toàn bộ lịch sử BMI?")
+                .setMessage("Bạn có chắc muốn xóa toàn bộ lịch sử BMI của " + userEmail + "?")
                 .setPositiveButton("Xóa", (dialog, which) -> deleteAllRecords())
                 .setNegativeButton("Hủy", null)
                 .show();
     }
 
     private void deleteRecord(BMIRecord record) {
-        int rowsDeleted = db.delete("bmi_records",
-                "id = ?",
-                new String[]{String.valueOf(record.getId())});
+        try {
+            // Sử dụng câu lệnh SQL trực tiếp
+            db.execSQL("DELETE FROM bmi_records WHERE id = ?", new Object[]{record.getId()});
 
-        if (rowsDeleted > 0) {
             Toast.makeText(this, "Đã xóa bản ghi", Toast.LENGTH_SHORT).show();
             loadBMIHistory();
-        } else {
-            Toast.makeText(this, "Lỗi khi xóa bản ghi", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void deleteAllRecords() {
-        int rowsDeleted = db.delete("bmi_records",
-                "user_email = ?",
-                new String[]{userEmail});
+        try {
+            db.execSQL("DELETE FROM bmi_records WHERE user_email = ?", new Object[]{userEmail});
 
-        if (rowsDeleted > 0) {
-            Toast.makeText(this, "Đã xóa " + rowsDeleted + " bản ghi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Đã xóa tất cả bản ghi", Toast.LENGTH_SHORT).show();
             loadBMIHistory();
-        } else {
-            Toast.makeText(this, "Lỗi khi xóa dữ liệu", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Lỗi khi xóa: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

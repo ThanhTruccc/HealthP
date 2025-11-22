@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.example.healthprofile.BMICalculatorActivity;
 import com.example.healthprofile.HealthProfileActivity;
 import com.example.healthprofile.HealthTipsActivity;
+import com.example.healthprofile.MedicalUserRecordsActivity;
 import com.example.healthprofile.MedicationReminderActivity;
 import com.example.healthprofile.R;
 import com.example.healthprofile.model.HealthProfile;
@@ -35,7 +36,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class UtilityFragment extends Fragment {
 
-    private CardView cardHealthProfile, cardBMICalculator, cardHealthTips, cardMedicationReminder;
+    private CardView cardHealthProfile, cardBMICalculator, cardHealthTips, cardMedicationReminder, card_medical_history;
     private TextView tvProfileStatus, tvBmiValue, tvMedicationCount;
 
     // SQLiteDatabase trực tiếp
@@ -80,6 +81,7 @@ public class UtilityFragment extends Fragment {
         tvProfileStatus = view.findViewById(R.id.tv_profile_status);
         tvBmiValue = view.findViewById(R.id.tv_bmi_value);
         tvMedicationCount = view.findViewById(R.id.tv_medication_count);
+        card_medical_history = view.findViewById(R.id.card_medical_history);
     }
 
     /**
@@ -250,6 +252,11 @@ public class UtilityFragment extends Fragment {
         // Card Nhắc nhở uống thuốc
         cardMedicationReminder.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), MedicationReminderActivity.class);
+            startActivity(intent);
+        });
+
+        card_medical_history.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), MedicalUserRecordsActivity.class);
             startActivity(intent);
         });
     }

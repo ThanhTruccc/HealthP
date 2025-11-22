@@ -16,15 +16,13 @@
         android:background="#FFFFFF"
         android:elevation="4dp">
 
-
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_back"
-                app:tint="@color/black" />
-
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_back"
+            app:tint="@color/black" />
 
         <TextView
             android:layout_width="0dp"
@@ -41,11 +39,45 @@
             android:layout_height="40dp"/>
     </LinearLayout>
 
+    <!-- Patient Filter Spinner -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lọc theo bệnh nhân"
+                android:textSize="12sp"
+                android:textColor="#999999"
+                android:layout_marginBottom="4dp"/>
+
+            <Spinner
+                android:id="@+id/spinner_patients"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
     <!-- Search -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="4dp">
 
@@ -93,9 +125,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bệnh án sẽ hiển thị ở đây"
+            android:text="Chỉ hiển thị bệnh án của bệnh nhân đã đặt lịch"
             android:textSize="14sp"
             android:textColor="#CCCCCC"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"/>
     </LinearLayout>
 </LinearLayout>

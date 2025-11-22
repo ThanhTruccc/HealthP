@@ -6,11 +6,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,19 +20,28 @@ import com.example.healthprofile.adapter.DoctorMedicalRecordAdapter;
 import com.example.healthprofile.model.HealthRecord;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MedicalRecordsActivity extends AppCompatActivity {
 
     private SearchView searchView;
+    private Spinner spinnerPatients;
     private RecyclerView rvMedicalRecords;
     private LinearLayout emptyState;
     private ImageView btnBack;
     private SQLiteDatabase db;
     private int doctorUserId;
+    private int doctorId;
     private List<HealthRecord> recordList;
     private List<HealthRecord> filteredList;
     private DoctorMedicalRecordAdapter adapter;
+
+    private Map<String, String> patientMap;
+    private List<String> patientNames;
+    private List<String> patientEmails;
+    private String selectedPatientEmail = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +53,43 @@ public class MedicalRecordsActivity extends AppCompatActivity {
 
         db = openOrCreateDatabase("health_profile.db", MODE_PRIVATE, null);
 
+        getDoctorId();
         initViews();
+        loadPatientList();
         loadMedicalRecords();
+    }
+
+    private void getDoctorId() {
+        Cursor cursor = db.rawQuery(
+                "SELECT doctor_id FROM user_doctors WHERE user_id = ?",
+                new String[]{String.valueOf(doctorUserId)}
+        );
+
+        if (cursor.moveToFirst()) {
+            doctorId = cursor.getInt(0);
+        } else {
+            cursor.close();
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String doctorName = prefs.getString("fullName", "");
+
+            cursor = db.rawQuery(
+                    "SELECT id FROM doctors WHERE name LIKE ?",
+                    new String[]{"%" + doctorName.replace("BS. ", "") + "%"}
+            );
+
+            if (cursor.moveToFirst()) {
+                doctorId = cursor.getInt(0);
+            } else {
+                doctorId = doctorUserId;
+            }
+        }
+        cursor.close();
     }
 
     private void initViews() {
         btnBack = findViewById(R.id.btn_back);
         searchView = findViewById(R.id.search_view);
+        spinnerPatients = findViewById(R.id.spinner_patients);
         rvMedicalRecords = findViewById(R.id.rv_medical_records);
         emptyState = findViewById(R.id.empty_state);
 
@@ -65,7 +106,6 @@ public class MedicalRecordsActivity extends AppCompatActivity {
         });
         rvMedicalRecords.setAdapter(adapter);
 
-        // Setup search
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -80,30 +120,107 @@ public class MedicalRecordsActivity extends AppCompatActivity {
         });
     }
 
+    private void loadPatientList() {
+        patientMap = new HashMap<>();
+        patientNames = new ArrayList<>();
+        patientEmails = new ArrayList<>();
+
+        patientNames.add("Tất cả bệnh nhân");
+        patientEmails.add(null);
+
+        // Query tối ưu: chỉ lấy bệnh nhân có cả bệnh án VÀ đã đặt lịch
+        Cursor cursor = db.rawQuery(
+                "SELECT DISTINCT mr.patient_email, u.fullName " +
+                        "FROM medical_records mr " +
+                        "INNER JOIN user u ON mr.patient_email = u.email " +
+                        "INNER JOIN appointments a ON a.user_email = mr.patient_email AND a.doctor_id = ? " +
+                        "WHERE mr.doctor_user_id = ? " +
+                        "ORDER BY u.fullName ASC",
+                new String[]{String.valueOf(doctorId), String.valueOf(doctorUserId)}
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                String email = cursor.getString(0);
+                String name = cursor.getString(1);
+
+                if (email != null) {
+                    String displayName = name != null ? name : email;
+                    patientMap.put(email, displayName);
+                    patientNames.add(displayName);
+                    patientEmails.add(email);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        // Setup spinner
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                patientNames
+        );
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPatients.setAdapter(spinnerAdapter);
+
+        spinnerPatients.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedPatientEmail = patientEmails.get(position);
+                loadMedicalRecords();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedPatientEmail = null;
+            }
+        });
+    }
+
     private void loadMedicalRecords() {
         recordList.clear();
         filteredList.clear();
 
-        // Query lấy tất cả medical_records của bác sĩ này
-        Cursor cursor = db.rawQuery(
-                "SELECT mr.*, u.fullName as patient_full_name " +
-                        "FROM medical_records mr " +
-                        "JOIN user u ON mr.patient_email = u.email " +
-                        "WHERE mr.doctor_user_id = ? " +
-                        "ORDER BY mr.visit_date DESC, mr.created_at DESC",
-                new String[]{String.valueOf(doctorUserId)}
-        );
+        String query;
+        String[] selectionArgs;
+
+        if (selectedPatientEmail != null) {
+            // Lọc theo bệnh nhân cụ thể (đã chắc chắn có appointment)
+            query = "SELECT mr.*, u.fullName as patient_full_name " +
+                    "FROM medical_records mr " +
+                    "INNER JOIN user u ON mr.patient_email = u.email " +
+                    "WHERE mr.doctor_user_id = ? AND mr.patient_email = ? " +
+                    "ORDER BY mr.visit_date DESC, mr.created_at DESC";
+            selectionArgs = new String[]{
+                    String.valueOf(doctorUserId),
+                    selectedPatientEmail
+            };
+        } else {
+            // Tất cả bệnh nhân (chỉ những người đã đặt lịch)
+            query = "SELECT mr.*, u.fullName as patient_full_name " +
+                    "FROM medical_records mr " +
+                    "INNER JOIN user u ON mr.patient_email = u.email " +
+                    "INNER JOIN appointments a ON a.user_email = mr.patient_email AND a.doctor_id = ? " +
+                    "WHERE mr.doctor_user_id = ? " +
+                    "ORDER BY mr.visit_date DESC, mr.created_at DESC";
+            selectionArgs = new String[]{
+                    String.valueOf(doctorId),
+                    String.valueOf(doctorUserId)
+            };
+        }
+
+        Cursor cursor = db.rawQuery(query, selectionArgs);
 
         if (cursor.moveToFirst()) {
             do {
                 HealthRecord record = new HealthRecord();
                 record.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
 
-                // Lấy patient_name từ join hoặc từ cột patient_name
+                // Lấy tên bệnh nhân
                 int patientNameIndex = cursor.getColumnIndex("patient_full_name");
                 if (patientNameIndex != -1 && !cursor.isNull(patientNameIndex)) {
                     String patientName = cursor.getString(patientNameIndex);
-                    record.setNotes("Patient: " + patientName); // Tạm lưu tên bệnh nhân vào notes
+                    record.setNotes("Patient: " + patientName);
                 } else {
                     int nameIndex = cursor.getColumnIndex("patient_name");
                     if (nameIndex != -1 && !cursor.isNull(nameIndex)) {
@@ -131,7 +248,6 @@ public class MedicalRecordsActivity extends AppCompatActivity {
 
         filteredList.addAll(recordList);
         adapter.notifyDataSetChanged();
-
         updateEmptyState();
     }
 
@@ -146,10 +262,12 @@ public class MedicalRecordsActivity extends AppCompatActivity {
                 String patientName = record.getNotes() != null ? record.getNotes().toLowerCase() : "";
                 String diagnosis = record.getDiagnosis() != null ? record.getDiagnosis().toLowerCase() : "";
                 String symptoms = record.getSymptoms() != null ? record.getSymptoms().toLowerCase() : "";
+                String date = record.getDate() != null ? record.getDate().toLowerCase() : "";
 
                 if (patientName.contains(lowerQuery) ||
                         diagnosis.contains(lowerQuery) ||
-                        symptoms.contains(lowerQuery)) {
+                        symptoms.contains(lowerQuery) ||
+                        date.contains(lowerQuery)) {
                     filteredList.add(record);
                 }
             }

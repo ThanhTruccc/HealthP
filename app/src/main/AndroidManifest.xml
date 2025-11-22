@@ -101,5 +101,6 @@
         <activity android:name=".MedicalRecordDetailActivity" android:exported="false"/>
         <activity android:name=".HealthTipsActivity" android:exported="false"/>
         <activity android:name=".HealthTipDetailActivity" android:exported="false"/>
+        <activity android:name=".MedicalUserRecordsActivity" android:exported="false"/>
     </application>
 </manifest>

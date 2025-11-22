@@ -192,15 +192,32 @@ public class DoctorDashboardActivity extends AppCompatActivity {
         if (cursor.moveToFirst()) {
             do {
                 Appointment appointment = new Appointment();
-                appointment.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
-                appointment.setPatientEmail(cursor.getString(cursor.getColumnIndexOrThrow("user_email")));
-                appointment.setPatientName(cursor.getString(cursor.getColumnIndexOrThrow("patient_name")));
-                appointment.setDoctorId(cursor.getInt(cursor.getColumnIndexOrThrow("doctor_id")));
-                appointment.setDoctorName(cursor.getString(cursor.getColumnIndexOrThrow("doctor_name")));
-                appointment.setAppointmentDate(cursor.getString(cursor.getColumnIndexOrThrow("appointment_date")));
-                appointment.setAppointmentTime(cursor.getString(cursor.getColumnIndexOrThrow("appointment_time")));
-                appointment.setReason(cursor.getString(cursor.getColumnIndexOrThrow("reason")));
-                appointment.setStatus(cursor.getString(cursor.getColumnIndexOrThrow("status")));
+                int idIndex = cursor.getColumnIndex("id");
+                if (idIndex != -1) appointment.setId(cursor.getInt(idIndex));
+
+                int emailIndex = cursor.getColumnIndex("user_email");
+                if (emailIndex != -1) appointment.setPatientEmail(cursor.getString(emailIndex));
+
+                int nameIndex = cursor.getColumnIndex("patient_name");
+                if (nameIndex != -1) appointment.setPatientName(cursor.getString(nameIndex));
+
+                int doctorIdIndex = cursor.getColumnIndex("doctor_id");
+                if (doctorIdIndex != -1) appointment.setDoctorId(cursor.getInt(doctorIdIndex));
+
+                int doctorNameIndex = cursor.getColumnIndex("doctor_name");
+                if (doctorNameIndex != -1) appointment.setDoctorName(cursor.getString(doctorNameIndex));
+
+                int dateIndex = cursor.getColumnIndex("appointment_date");
+                if (dateIndex != -1) appointment.setAppointmentDate(cursor.getString(dateIndex));
+
+                int timeIndex = cursor.getColumnIndex("appointment_time");
+                if (timeIndex != -1) appointment.setAppointmentTime(cursor.getString(timeIndex));
+
+                int reasonIndex = cursor.getColumnIndex("reason");
+                if (reasonIndex != -1) appointment.setReason(cursor.getString(reasonIndex));
+
+                int statusIndex = cursor.getColumnIndex("status");
+                if (statusIndex != -1) appointment.setStatus(cursor.getString(statusIndex));
 
                 int notesIndex = cursor.getColumnIndex("notes");
                 if (notesIndex != -1 && !cursor.isNull(notesIndex)) {

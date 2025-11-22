@@ -168,64 +168,6 @@
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Căn cước công dân -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:hint="Căn cước công dân (CCCD)"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#1D57B8"
-                    app:hintTextColor="#1D57B8"
-                    app:startIconDrawable="@android:drawable/ic_menu_view"
-                    app:startIconTint="#1D57B8"
-                    app:helperText="12 chữ số"
-                    app:helperTextTextColor="#757575">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_citizen_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:padding="16dp"
-                        android:textSize="16sp"
-                        android:maxLength="12"
-                        android:maxLines="1" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <!-- Mã bảo hiểm y tế -->
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
-                    android:hint="Mã bảo hiểm y tế (BHYT)"
-                    app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusTopStart="12dp"
-                    app:boxCornerRadiusTopEnd="12dp"
-                    app:boxCornerRadiusBottomStart="12dp"
-                    app:boxCornerRadiusBottomEnd="12dp"
-                    app:boxStrokeColor="#1D57B8"
-                    app:hintTextColor="#1D57B8"
-                    app:startIconDrawable="@android:drawable/ic_menu_agenda"
-                    app:startIconTint="#1D57B8"
-                    app:helperText="VD: HS4010012345678 (15 ký tự)"
-                    app:helperTextTextColor="#757575">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_health_insurance"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textCapCharacters"
-                        android:padding="16dp"
-                        android:textSize="16sp"
-                        android:maxLength="15"
-                        android:maxLines="1" />
-                </com.google.android.material.textfield.TextInputLayout>
-
                 <!-- Info Card -->
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
