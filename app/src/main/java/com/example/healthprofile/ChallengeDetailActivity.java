@@ -251,7 +251,7 @@ public class ChallengeDetailActivity extends AppCompatActivity implements Challe
         protected void onPostExecute(Boolean success) {
             if (success) {
                 Toast.makeText(ChallengeDetailActivity.this,
-                        "Tham gia thử thách thành công! 🎉",
+                        "Tham gia thử thách thành công!",
                         Toast.LENGTH_SHORT).show();
 
                 // Cập nhật trạng thái
@@ -270,12 +270,12 @@ public class ChallengeDetailActivity extends AppCompatActivity implements Challe
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle(challenge.getTitle());
 
-        String message = "📝 Mô tả: " + challenge.getDescription() + "\n\n" +
-                "👥 Người tham gia: " + challenge.getParticipants() + " người\n" +
-                "⏰ Thời gian: " + challenge.getDurationDays() + " ngày\n" +
-                "⏳ Còn lại: " + challenge.getDaysLeft() + " ngày\n" +
-                "⭐ Phần thưởng: +" + challenge.getRewardPoints() + " điểm\n" +
-                "✅ Trạng thái: " + (challenge.isJoined() ? "Đã tham gia" : "Chưa tham gia");
+        String message = "Mô tả: " + challenge.getDescription() + "\n\n" +
+                "Người tham gia: " + challenge.getParticipants() + " người\n" +
+                "Thời gian: " + challenge.getDurationDays() + " ngày\n" +
+                "Còn lại: " + challenge.getDaysLeft() + " ngày\n" +
+                "Phần thưởng: +" + challenge.getRewardPoints() + " điểm\n" +
+                "Trạng thái: " + (challenge.isJoined() ? "Đã tham gia" : "Chưa tham gia");
 
         builder.setMessage(message);
         builder.setPositiveButton("Đóng", null);

@@ -292,7 +292,7 @@ public class ChallengeAdapter extends RecyclerView.Adapter<ChallengeAdapter.View
 
             mainHandler.post(() -> {
                 if (success) {
-                    Toast.makeText(context, "Tham gia thành công! +50 điểm",
+                    Toast.makeText(context, "Tham gia thành công!",
                             Toast.LENGTH_SHORT).show();
 
                     // Cập nhật UI

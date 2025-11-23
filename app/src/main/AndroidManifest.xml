@@ -91,7 +91,6 @@
         <activity android:name=".ExerciseTrackerActivity" android:exported="false" />
         <activity android:name=".StepCounterActivity" android:exported="false" />
         <service android:name=".StepCounterService" android:enabled="true" android:exported="false" android:foregroundServiceType="health" />
-        <activity android:name=".StepTrackerActivity" android:exported="false" android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".DoctorDashboardActivity" android:exported="false" />
         <activity android:name=".AppointmentDetailActivity" android:exported="false" />
         <activity android:name=".AppointmentUserDetailActivity" android:exported="false" />
